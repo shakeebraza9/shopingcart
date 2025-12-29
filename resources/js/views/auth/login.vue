@@ -122,7 +122,7 @@ export default {
         this.$themeStore.startLoading()
         this.userStore.getProfile().then(() => {
             this.$themeStore.endLoading()
-            this.$router.replace("/user/dashboard");
+            this.$router.replace("/admin/dashboard");
         }).catch(() => this.$themeStore.endLoading())
             
        
@@ -140,7 +140,7 @@ export default {
                 this.userStore.initializeUserSession(response.token,response.user);
                 themeStore.endLoading();
                 this.alertStore.add('Logged In Success', 'success');
-                this.$router.replace("/user/dashboard");
+                this.$router.replace("/admin/dashboard");
 
             } catch (error) {
                 themeStore.endLoading();

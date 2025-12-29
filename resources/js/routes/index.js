@@ -36,7 +36,7 @@ const routes = [
     { path: '/login', component: Login},
     { path: '/forgetpassowrd',name: 'forgot-password', component: Forget},
     {
-        path: "/user",
+        path: "/admin",
         component: Layout,
         children: [
             { path: 'dashboard', component: Dashboard, meta: { requiresAuth: true } },

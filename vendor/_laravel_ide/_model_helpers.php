@@ -9661,10 +9661,78 @@ namespace App\Models {
     /**
      * App\Models\User
      *
+     * @property string|null $source
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property string|null $avatar
+     * @property string|null $addressProof
+     * @property string|null $motorTradeProof
+     * @property string|null $uploadID
+     * @property string|null $last_resend_at
+     * @property mixed $resend_count
+     * @property mixed $email_verification_token_status
+     * @property string|null $email_verification_token
+     * @property string $password
+     * @property string $personalEmail
+     * @property string $phone
+     * @property string|null $jobTitle
+     * @property string $title
+     * @property string $surname
+     * @property string $firstName
+     * @property string $vatNumber
+     * @property string $motorTradeInsurance
+     * @property string $businessEmail
+     * @property string $website
+     * @property string $companyReg
+     * @property string $businessType
+     * @property string $telephone
+     * @property string $postcode
+     * @property string $country
+     * @property string $townCity
+     * @property string $companyAddress2
+     * @property string $companyAddress1
+     * @property string $companyName
+     * @property mixed $status
+     * @property mixed $user_type
+     * @property int $id
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
      * @property-read int|null $tokens_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
      * @property-read int|null $notifications_count
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereUserType($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereStatus($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCompanyname($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCompanyaddress1($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCompanyaddress2($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereTowncity($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCountry($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePostcode($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereTelephone($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereBusinesstype($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCompanyreg($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereWebsite($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereBusinessemail($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereMotortradeinsurance($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereVatnumber($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereFirstname($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereSurname($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereTitle($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereJobtitle($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePhone($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePersonalemail($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePassword($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmailVerificationToken($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmailVerificationTokenStatus($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereResendCount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereLastResendAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereUploadid($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereMotortradeproof($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereAddressproof($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereAvatar($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereUpdatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereSource($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User query()
