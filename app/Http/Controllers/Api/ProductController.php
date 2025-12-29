@@ -7,63 +7,23 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Collection;
+use App\Models\Cart;
+use App\Models\OrderStatus;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\ProductCollection;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use App\Models\Brand;
-use App\Models\newsletter;
-use App\Models\Attribute;
-use App\Models\Value;
-use App\Models\Page;
-use App\Models\Variation;
-use App\Models\VariationAttribute;
-use App\Models\Slider;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Mail;
-use Symfony\Component\Mime\Part\HtmlPart;
-use Illuminate\Support\Facades\App;
 use App\Models\NotifyEmail;
-use App\Models\ProductReview;
-use Illuminate\Http\JsonResponse;
+use App\Http\Utilities\EmailUtility;
+use Mpdf\Mpdf;
 
 class ProductController extends Controller
 {
-public function popular()
-    {
-        $products = Product::where('is_featured', 1)
-            ->where('is_enable', 1)
-            ->latest()
-            ->take(12)
-            ->get();
-
-        return response()->json([
-            'status' => true,
-            'data'   => $products
-        ]);
-    }
 
 
-    public function search(Request $request)
-    {
-        $search = $request->query('title'); // GET parameter se title lena
 
-        if (!$search) {
-            return response()->json([
-                'status' => false,
-                'message' => 'title query parameter is required'
-            ], 400);
-        }
 
-        $products = Product::where('title', 'LIKE', "%{$search}%")
-            ->where('is_enable', 1)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return response()->json([
-            'status' => true,
-            'data'   => $products
-        ]);
-    }
 
 
 
@@ -71,7 +31,7 @@ public function popular()
     {
         $data = Product::query();
 
-        // 1️⃣ Search
+
         if ($request->has('search') && $request->search != '') {
             $searchTerm = $request->search;
             $data->where(function ($query) use ($searchTerm) {
@@ -151,92 +111,35 @@ public function popular()
             'data' => $products
         ]);
     }
+    public function singleProduct($slug)
+    {
+        $product = Product::where('slug', $slug)->first();
 
-   public function productApi($id)
-{
-    // Fetch product with variations + reviews
-    $product = Product::with([
-        'variations.attributes.values',
-        'variations.attributes.attribute',
-        'reviews' // 👈 add kiya
-    ])
-    ->where('slug', $id)
-    ->firstOrFail();
-
-    // Get related products randomly
-    $related_products = Product::orderByRaw('RAND()')->limit(4)->get();
-
-    // ✅ Get discount percent value from settings
-    $discountSetting = DB::table('settings')->where('field', 'discount_percent')->first();
-    $discount = 0;
-
-    if ($discountSetting && is_numeric($discountSetting->value)) {
-        $discount = (float) $discountSetting->value;
-    }
-
-    // 🟢 Apply discount on main product price if applicable
-    $finalProductPrice = $product->price;
-    if ($discount > 0 && $finalProductPrice > 0) {
-        $discountAmount = ($finalProductPrice * $discount) / 100;
-        $finalProductPrice = round($finalProductPrice - $discountAmount, 2);
-    }
-
-    $attributes = [];
-    $values = [];
-    $variations = [];
-
-    foreach ($product->variations as $variation) {
-        foreach ($variation->attributes as $attribute) {
-
-            // 🟢 Apply discount to variation price
-            $variationPrice = $variation->price;
-            if ($discount > 0 && $variationPrice > 0) {
-                $variationPrice = round($variationPrice - ($variationPrice * $discount) / 100, 2);
-            }
-
-            $variations[] = [
-                'variation_id'     => $variation->id,
-                'sku'              => $variation->sku,
-                'quantity'         => $variation->quantity,
-                'price'            => $variationPrice,
-                'image'            => $variation->image,
-                'attribute_id'     => $attribute->attribute->id,
-                'attribute_title'  => $attribute->attribute->title,
-                'value_id'         => $attribute->values->id,
-                'value_title'      => $attribute->values->title,
-            ];
-
-            $attributes[$attribute->attribute->id] = $attribute->attribute->toArray();
-            $values[$attribute->values->id] = $attribute->values->toArray();
+        if (!$product) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Product not found'
+            ], 404);
         }
+
+        // Discount
+        $discountSetting = DB::table('settings')
+            ->where('field', 'discount_percent')
+            ->first();
+
+        $discountPercent = $discountSetting ? floatval($discountSetting->value) : 0;
+
+        $discountAmount = ($product->price * $discountPercent) / 100;
+        $product->price = round($product->price - $discountAmount, 2);
+
+        return response()->json([
+            'status' => true,
+            'data' => $product
+        ]);
     }
 
-    // 🟢 JSON Response
-    return response()->json([
-        'status'   => true,
-        'message'  => 'Product details fetched successfully',
-        'data'     => [
-            'product'   => [
-                'id'    => $product->id,
-                'title' => $product->title,
-                'brand' => $product->brand ? $product->brand->title : null,
-                'description' => $product->description,
-                'slug'  => $product->slug,
-                'price' => $finalProductPrice,
-                'originalPrice' => $product->selling_price,
-                'image' => $product->image,
-                'hover_image' => $product->hover_image,
-                'gallery' => $product->images,
-            ],
-            'customerReviews' => $product->reviews, // 👈 yahan reviews bhej rahe hain
-            'attributes'        => array_values($attributes),
-            'values'            => array_values($values),
-            'variations'        => $variations,
-            'related_products'  => $related_products,
-            'discount_percent'  => $discount,
-        ]
-    ], 200);
-}
+
+
 
 public function checkStockInAva($productId, Request $request)
     {
@@ -347,53 +250,111 @@ public function storenotify(Request $request)
         ]);
     }
 
-public function homeReviews(): JsonResponse
+
+
+public function checkoutSubmitApi(Request $request)
 {
-    $reviews = ProductReview::where('is_home', 1)
-        ->orderBy('id', 'DESC')
-        ->get();
 
-    return response()->json([
-        'status' => true,
-        'data'   => $reviews
-    ]);
-}
-
-
-public function store(Request $request)
-{
-    $request->validate([
-        'product_id' => 'required|integer|exists:products,id',
-        'name'       => 'required|string|max:255',
-        'review'     => 'required|string',
-        'star'       => 'required|integer|min:1|max:5',
+    $validator = Validator::make($request->all(), [
+        "name" => "required|max:255",
+        "phone" => "required|max:255",
+        "email" => "required|email",
+        "country" => "required|max:255",
+        "city" => "required|max:255",
+        "address" => "required|max:255",
+        "order_notes" => "nullable|max:500",
+        "cart_items" => "required|array|min:1",
+        "cart_items.*.variation_id" => "required|integer",
+        "cart_items.*.title" => "required|string",
+        "cart_items.*.sku" => "required|string",
+        "cart_items.*.price" => "required|numeric",
+        "cart_items.*.quantity" => "required|integer",
+        "cart_items.*.total" => "required|numeric",
     ]);
 
-    $existingReview = ProductReview::where('product_id', $request->product_id)
-        ->where('name', $request->name)
-        ->first();
-
-    if ($existingReview) {
+    if ($validator->fails()) {
         return response()->json([
-            'status'  => false,
-            'message' => 'You have already submitted a review for this product.'
-        ], 409);
+            "status" => false,
+            "errors" => $validator->errors()
+        ], 422);
     }
 
-    $review = ProductReview::create([
-        'product_id' => $request->product_id,
-        'name'       => $request->name,
-        'review'     => $request->review,
-        'star'       => $request->star,
-        'status'     => 1,
-        'is_home'    => 0,
-    ]);
+   
+    $subtotal = collect($request->cart_items)->sum('total');
+    $delivery_charges = 100; 
+    $grand_total = $subtotal + $delivery_charges;
 
-    return response()->json([
-        'status'  => true,
-        'message' => 'Review submitted successfully. Waiting for approval.',
-        'data'    => $review
-    ], 201);
+    DB::beginTransaction();
+
+    try {
+
+        $status = OrderStatus::where('id', 1)->first();
+
+        $tracking_id = "ORD-" . uniqid();
+
+
+        $order = Order::create([
+            "customer_name" => $request->name,
+            "customer_email" => $request->email,
+            "customer_phone" => $request->phone,
+            "country" => $request->country,
+            "city" => $request->city,
+            "address" => $request->address,
+            "customer_notes" => $request->order_notes,
+            "payment_method" => 1, 
+            "payment_status" => "unpaid",
+            "tracking_id" => $tracking_id,
+            "order_status" => $status->id,
+            "subtotal" => $subtotal,
+            "delivery_charges" => $delivery_charges,
+            "grandtotal" => $grand_total,
+            "is_enable" => 1,
+        ]);
+
+        // 5️⃣ Order Items
+        foreach ($request->cart_items as $item) {
+            OrderItem::create([
+                "order_id" => $order->id,
+                "variation_id" => $item['variation_id'],
+                "title" => $item['title'],
+                "sku" => $item['sku'],
+                "attr" => json_encode($item['attributes'] ?? []),
+                "image_id" => $item['image'] ?? null,
+                "quantity" => $item['quantity'],
+                "price" => $item['price'],
+                "total" => $item['total'],
+            ]);
+        }
+
+
+        // EmailUtility::send_customer_email($order->id);
+
+        DB::commit();
+
+
+        return response()->json([
+            "status" => true,
+            "message" => "Order placed successfully",
+            "data" => [
+                "order_id" => $order->id,
+                "tracking_id" => $tracking_id,
+                "grand_total" => $grand_total,
+                "payment_method" => "Cash on Delivery"
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        return response()->json([
+            "status" => false,
+            "message" => "Checkout failed",
+            "error" => $e->getMessage()
+        ], 500);
+    }
 }
+
+
+
 
 }

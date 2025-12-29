@@ -2,27 +2,12 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-// use App\Http\Controllers\Api\AuthController;
-// use App\Http\Controllers\Api\CategoryController;
-// use App\Http\Controllers\Api\DashboardController;
-// use App\Http\Controllers\Api\DeliveryNoteController;
-// use App\Http\Controllers\Api\ExpenseCategoryController;
-// use App\Http\Controllers\Api\ExpenseController;
-// use App\Http\Controllers\Api\PaymentController;
-// use App\Http\Controllers\Api\ProductController;
-// use App\Http\Controllers\Api\SaleInvoiceController;
-// use App\Http\Controllers\Api\UnitController;
-// use App\Http\Controllers\Api\UserController;
-// use App\Http\Controllers\Api\ReportController;
-// use App\Http\Controllers\Api\SaleOrderController;
-// use App\Http\Controllers\Api\StockAdjustmentController;
+use App\Http\Controllers\Api\ProductController;
 
 // Route::get('/user', function (Request $request) {
     //     return $request->user();
     // })->middleware('auth:sanctum');
     
-use App\Http\Controllers\Api\ProductController;
 
 
 // Route::prefix('auth')->group(function () {
@@ -36,26 +21,10 @@ use App\Http\Controllers\Api\ProductController;
 //     Route::post('/changePassword', [AuthController::class, 'changePassword'])->middleware(['auth:sanctum']);
 // });
 
- Route::get('shop', [ProductController::class, 'shop']);
+Route::get('shop', [ProductController::class, 'shop']);
+Route::get('/shop/{slug}', [ProductController::class, 'singleProduct']);
+Route::post('/checkout', [ProductController::class, 'checkoutSubmitApi']);
+
+
 // Route::apiResource('users', UserController::class);
-// Route::apiResource('products', ProductController::class);
-// Route::apiResource('category', CategoryController::class);
-// Route::apiResource('unit', UnitController::class);
-// Route::apiResource('expenseCategory', ExpenseCategoryController::class);
-// Route::apiResource('expenses', ExpenseController::class);
 
-// Route::apiResource('payments', PaymentController::class);
-// Route::apiResource('stockadjustment', StockAdjustmentController::class);
-
-// Route::apiResource('saleOrder', SaleOrderController::class);
-// Route::apiResource('deliveryNotes', DeliveryNoteController::class);
-// Route::apiResource('saleInvoice', SaleInvoiceController::class);
-
-
-// Route::prefix('reports')->group(function () {
-
-//     Route::get('/customerLedger', [ReportController::class, 'customerLedger']);
-//     Route::get('/customerLedgerDetail/{id}', [ReportController::class, 'customerLedgerDetail']);
-//     Route::get('/inventory', [ReportController::class, 'inventory']);
-//     Route::get('/inventoryDetail/{id}', [ReportController::class, 'inventoryDetail']);
-// });

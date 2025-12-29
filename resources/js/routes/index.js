@@ -11,7 +11,7 @@ import Layout from "@views/user/layout/index.vue";
 import NotFound from "@views/user/404.vue"
 import Login from '@/views/auth/login.vue';
 import Shop from "@/views/web/shop.vue"
-// import Shopdetail from '@/views/web/shopdetail.vue';
+import Shopdetail from '@/views/web/shopdetail.vue';
 import Dashboard from '@views/user/dashboard/index.vue';
 // import accountRoutes from "@views/user/account/route"
 // import inventoryRoute from "@views/user/Inventory/route"
@@ -34,7 +34,7 @@ const suburl = import.meta.env.VITE_SUB_URL;
 const routes = [
 
     { path: '/', component: Shop},
-    // { path: '/Shopdetail/:id', component: Shopdetail},
+    { path: '/shop/:slug', component: Shopdetail},
     { path: '/login', component: Login},
     { path: '/forgetpassowrd',name: 'forgot-password', component: Forget},
     {

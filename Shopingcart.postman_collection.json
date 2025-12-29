@@ -1,0 +1,89 @@
+{
+	"info": {
+		"_postman_id": "5290972e-3476-48b2-9f54-d57e5bcd48f8",
+		"name": "Shopingcart",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50942393",
+		"_collection_link": "https://speeding-sunset-9077779.postman.co/workspace/DA-PP's-Workspace~08aef13c-7ee3-498d-8cdc-87a721c97d51/collection/50942393-5290972e-3476-48b2-9f54-d57e5bcd48f8?action=share&source=collection_link&creator=50942393"
+	},
+	"item": [
+		{
+			"name": "Web",
+			"item": [
+				{
+					"name": "shop",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "shopSingle",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Muhammad Shakeeb\",\r\n  \"phone\": \"03001234567\",\r\n  \"email\": \"shakeeb@test.com\",\r\n  \"country\": \"Pakistan\",\r\n  \"city\": \"Lahore\",\r\n  \"address\": \"Model Town, Lahore\",\r\n  \"order_notes\": \"Please deliver after 6pm\",\r\n  \"cart_items\": [\r\n    {\r\n      \"variation_id\": 37,\r\n      \"title\": \"Test Product\",\r\n      \"sku\": \"TP001\",\r\n      \"price\": 500,\r\n      \"quantity\": 2,\r\n      \"total\": 1000,\r\n      \"attributes\": {\r\n        \"color\": \"Red\"\r\n      },\r\n      \"image\": 1\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/checkout",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"checkout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": ""
+		}
+	]
+}
