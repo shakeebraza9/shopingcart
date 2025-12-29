@@ -7,23 +7,15 @@ import { useAlertStore } from '@stores/alertStore';
 
 
 // Routes...
-import Layout from "@views/user/layout/index.vue";
-import NotFound from "@views/user/404.vue"
-import Login from '@/views/auth/login.vue';
+import LayoutWeb from "@/views/web/layout/Layout.vue";
 import Shop from "@/views/web/shop.vue"
-import Shopdetail from '@/views/web/shopdetail.vue';
+import ShopDetail from '@/views/web/shopdetail.vue';
+
+import Layout from "@views/user/layout/index.vue";
+import Login from '@/views/auth/login.vue';
+
+import NotFound from "@views/user/404.vue"
 import Dashboard from '@views/user/dashboard/index.vue';
-// import accountRoutes from "@views/user/account/route"
-// import inventoryRoute from "@views/user/Inventory/route"
-// import categoryRoute from "@views/user/category/route"
-// import expensecategoryRoute from "@views/user/ExpenseCategory/route"
-// import expenseRoute from "@views/user/Expense/route" 
-// import unitRoute from "@/views/user/unit/route"
-// import reportRoute from "@/views/user/reports/route"
-// import saleInvoiceRoute from "@/views/user/saleInvoice/route"
-// import paymentsRoute from "@/views/user/payments/route"
-// import stockadjustmentRoute from "@views/user/stockadjustment/route"
-// import saleorderRoute from "@views/user/saleorder/route"
 import deliverynoteRoute from "@views/user/deliverynote/route"
 import Forget  from '@/views/auth/forget.vue';
 
@@ -33,8 +25,14 @@ const suburl = import.meta.env.VITE_SUB_URL;
 
 const routes = [
 
-    { path: '/', component: Shop},
-    { path: '/shop/:slug', component: Shopdetail},
+    {
+        path: "/",
+        component: LayoutWeb,
+        children: [
+        { path: "", component: Shop },
+        { path: "shop/:slug", component: ShopDetail }
+        ]
+    },
     { path: '/login', component: Login},
     { path: '/forgetpassowrd',name: 'forgot-password', component: Forget},
     {
