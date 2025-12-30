@@ -140,7 +140,7 @@ export default {
                 this.userStore.initializeUserSession(response.token,response.user);
                 themeStore.endLoading();
                 this.alertStore.add('Logged In Success', 'success');
-                this.$router.replace("/admin/dashboard");
+                this.$router.replace("/admin");
 
             } catch (error) {
                 themeStore.endLoading();

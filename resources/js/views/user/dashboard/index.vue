@@ -13,7 +13,7 @@
         <v-card variant="elevated" elevation="5" color="background">
           <v-container>
             <h2>Sales Overview</h2>
-            <line-chart :chart-data="chartData" />
+            <!-- <line-chart :chart-data="chartData" /> -->
           </v-container>
         </v-card>
       </v-col>
@@ -24,13 +24,13 @@
 <script>
 import api from '@/plugins/axios';
 import DashboardCard from './DashboardCard.vue';
-import LineChart from './LineChart.vue';
+// import LineChart from './LineChart.vue';
 
 export default {
   name: 'AuctionDashboard',
   components: {
     DashboardCard,
-    LineChart,
+    // LineChart,
   },
   data() {
     return {
