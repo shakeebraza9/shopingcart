@@ -1,0 +1,5 @@
+php artisan queue:work --tries=1 -vvv
+php artisan tinker
+php artisan schedule:work
+\App\Jobs\DailySalesReportJob::dispatch()->onQueue('default');
+\App\Jobs\LowStockJob::dispatch()->onQueue('default');

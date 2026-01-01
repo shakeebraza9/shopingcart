@@ -918,9 +918,39 @@ namespace App\Models {
     /**
      * App\Models\Category
      *
+     * @property \Illuminate\Support\Carbon $updated_at
+     * @property \Illuminate\Support\Carbon $created_at
+     * @property string|null $meta_keywords
+     * @property string|null $meta_description
+     * @property string|null $meta_title
+     * @property mixed $is_enable
+     * @property mixed $sort
+     * @property mixed $is_featured
+     * @property mixed $level
+     * @property mixed $parent_id
+     * @property string|null $image_id
+     * @property string|null $details
+     * @property string|null $slug
+     * @property string $title
+     * @property int $id
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Category> $children
      * @property-read int|null $children_count
      * @property-read \App\Models\Category $parent
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereTitle($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereSlug($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereDetails($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereImageId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereParentId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereLevel($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereIsFeatured($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereSort($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereIsEnable($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereMetaTitle($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereMetaDescription($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereMetaKeywords($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Category>|Category query()
@@ -2747,6 +2777,32 @@ namespace App\Models {
     /**
      * App\Models\Filemanager
      *
+     * @property string $grouping
+     * @property mixed $is_enable
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property mixed $created_by
+     * @property string $type
+     * @property string $extension
+     * @property float|null $size
+     * @property string $filename
+     * @property string|null $path
+     * @property string|null $description
+     * @property string $title
+     * @property int $id
+     * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager whereTitle($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager whereDescription($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager wherePath($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager whereFilename($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager whereSize($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager whereExtension($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager whereType($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager whereCreatedBy($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager whereUpdatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager whereIsEnable($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager whereGrouping($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Filemanager>|Filemanager query()
@@ -9661,78 +9717,38 @@ namespace App\Models {
     /**
      * App\Models\User
      *
-     * @property string|null $source
+     * @property string|null $email_token
+     * @property string|null $profile_image
+     * @property string|null $permissions
+     * @property mixed $created_by
+     * @property mixed $status
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string|null $avatar
-     * @property string|null $addressProof
-     * @property string|null $motorTradeProof
-     * @property string|null $uploadID
-     * @property string|null $last_resend_at
-     * @property mixed $resend_count
-     * @property mixed $email_verification_token_status
-     * @property string|null $email_verification_token
+     * @property string|null $remember_token
      * @property string $password
-     * @property string $personalEmail
-     * @property string $phone
-     * @property string|null $jobTitle
-     * @property string $title
-     * @property string $surname
-     * @property string $firstName
-     * @property string $vatNumber
-     * @property string $motorTradeInsurance
-     * @property string $businessEmail
-     * @property string $website
-     * @property string $companyReg
-     * @property string $businessType
-     * @property string $telephone
-     * @property string $postcode
-     * @property string $country
-     * @property string $townCity
-     * @property string $companyAddress2
-     * @property string $companyAddress1
-     * @property string $companyName
-     * @property mixed $status
-     * @property mixed $user_type
+     * @property \Illuminate\Support\Carbon|null $email_verified_at
+     * @property string $email
+     * @property mixed $role_id
+     * @property string $name
      * @property int $id
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
      * @property-read int|null $tokens_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
      * @property-read int|null $notifications_count
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereUserType($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereStatus($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCompanyname($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCompanyaddress1($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCompanyaddress2($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereTowncity($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCountry($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePostcode($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereTelephone($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereBusinesstype($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCompanyreg($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereWebsite($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereBusinessemail($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereMotortradeinsurance($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereVatnumber($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereFirstname($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereSurname($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereTitle($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereJobtitle($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePhone($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePersonalemail($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereName($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereRoleId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmail($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmailVerifiedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePassword($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmailVerificationToken($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmailVerificationTokenStatus($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereResendCount($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereLastResendAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereUploadid($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereMotortradeproof($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereAddressproof($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereAvatar($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereRememberToken($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereUpdatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereSource($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereStatus($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCreatedBy($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePermissions($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereProfileImage($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmailToken($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User query()
