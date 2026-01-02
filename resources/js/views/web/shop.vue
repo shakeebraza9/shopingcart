@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-linear-to-br from-[#FAF7F2] via-[#F3EEE7] to-white">
 
-    <!-- ================= HERO ================= -->
+  
     <section class="max-w-7xl mx-auto px-6 py-24 text-center">
       <h1 class="text-5xl md:text-6xl font-serif font-semibold text-[#1C1C1C]">
         Our Collection
@@ -11,7 +11,7 @@
       </p>
     </section>
 
-    <!-- ================= AROMATIC ================= -->
+
     <section class="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
       <div class="bg-linear-to-br from-[#1C1C1C] to-[#2A2A2A] rounded-3xl p-10 text-white">
         <p class="text-sm tracking-widest opacity-80">SIGNATURE LINE</p>
@@ -44,7 +44,7 @@
       </div>
     </section>
 
-    <!-- ================= PRODUCT GRID ================= -->
+ 
     <section class="max-w-7xl mx-auto px-6 py-24">
       <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
 
@@ -76,18 +76,18 @@
             </span>
           </div>
 
-          <a
-            :href="`/shop/${item.slug || item.id}`"
-            class="mt-5 block text-center py-2.5 rounded-full border border-[#C9A24D] text-[#C9A24D]
-                   hover:bg-[#C9A24D] hover:text-white transition text-sm"
-          >
-            View Product
-          </a>
+        <router-link
+          :to="`/shop/${item.slug || item.id}`"
+          class="mt-5 block text-center py-2.5 rounded-full border border-[#C9A24D] text-[#C9A24D]
+                hover:bg-[#C9A24D] hover:text-white transition text-sm"
+        >
+                  View Product
+        </router-link>
         </div>
 
       </div>
 
-      <!-- Loader -->
+  
       <div v-if="loading" class="text-center py-24">
         <div class="inline-block h-10 w-10 animate-spin rounded-full border-4 border-[#C9A24D] border-t-transparent"></div>
       </div>
@@ -180,9 +180,9 @@ export default {
     imageUrl(img) {
       if (!img) return 'https://localhost/shopingcart/placeholder.png'
       if (img.startsWith('http')) return img
-    // return `https://localhost/shopingcart/public/${img}`
+        return `https://localhost/shopingcart/public/${img}`
 
-      return `http://127.0.0.1:8000/${img}`
+      // return `http://127.0.0.1:8000/${img}`
     }
   }
 }

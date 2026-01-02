@@ -1,18 +1,17 @@
 <template>
-        <!-- BACKDROP -->
         <div
           v-if="drawer"
           class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
           @click.self="$emit('close')"
         >
-          <!-- DRAWER -->
+
           <div
             class="absolute right-0 top-0 h-full w-full max-w-md
                    bg-[#F9F6F1] shadow-2xl
                    transform transition-transform duration-300 ease-out"
             :class="drawer ? 'translate-x-0' : 'translate-x-full'"
           >
-            <!-- HEADER -->
+ 
             <div class="flex items-center justify-between px-6 py-5 border-b">
               <h2 class="text-xl font-serif font-semibold text-gray-900">
                 Your Cart
@@ -24,25 +23,25 @@
                 ✕
               </button>
             </div>
-            <!-- CONTENT -->
+
             <div class="flex-1 overflow-y-auto px-6 py-6">
-              <!-- EMPTY -->
+ 
               <div
                 v-if="!cart.items.length"
                 class="text-center text-gray-500 mt-20"
               >
                 Your cart is empty
               </div> 
-             <!-- ITEMS -->
+         
               <div v-else class="space-y-6">
                 <div
                   v-for="item in cart.items"
                   :key="item.id"
                   class="flex gap-4 border-b pb-4 items-center"
                 >
-                  <!-- IMAGE -->
+    
                   <img
-                          :src="item.image? (item.image.startsWith('http')? item.image : `http://127.0.0.1:8000/${item.image}`) : placeholder"
+                          :src="item.image? (item.image.startsWith('http')? item.image : `https://localhost/shopingcart/public/${item.image}`) : placeholder"
                     class="w-16 h-20 object-contain rounded-lg bg-white"
                   />
                   <!-- <img
@@ -77,7 +76,7 @@
                         @click="cart.updateQty(item.id, item.quantity + 1)"
                       >+</button>
                     </div>
-                    <!-- REMOVE BUTTON -->
+    
                     <button
                       class="mt-2 text-xs text-red-500 hover:underline"
                       @click="cart. removeItem(item.id, userStore.user?.id)"
@@ -86,7 +85,7 @@
                 </div>
               </div>
             </div>
-            <!-- FOOTER -->
+
             <div
               v-if="cart.items.length"
               class="px-6 py-5 border-t bg-white"
@@ -105,32 +104,7 @@
           </div>
         </div>
       </template>
-      <!-- <script setup>
-          import { useCartStore } from '@/stores/cartStore';
-          import { useUserStore } from '@/stores/userStore';
-          import { computed, onMounted } from 'vue';
-          const props = defineProps({
-            drawer: {
-              type: Boolean,
-              required: true 
-            } 
-          });
-          const cart = useCartStore();
-          const userStore = useUserStore();
-          const placeholder = computed(() => "/images/placeholder.png");
-          onMounted(() => {
-            cart.load(userStore.user?.id || null);
-          });
-          function checkout() {
-            if (!this.cart.items.length) {
-                alert('Your cart is empty');
-                return;
-              }
 
-              this.$router.push('/Checkout');
-            alert('Proceed to checkout');
-          }
-      </script> -->
 
 <script setup>
 import { useCartStore } from '@/stores/cartStore'
@@ -152,7 +126,7 @@ const router = useRouter()
 const placeholder = computed(() => '/images/placeholder.png')
 
 onMounted(() => {
-  // DB-based cart load (auth token based)
+
   if (userStore.is_logged_in) {
     cart.load()
   }

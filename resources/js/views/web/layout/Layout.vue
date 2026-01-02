@@ -1,12 +1,12 @@
 <template>
   <div class="min-h-screen flex flex-col bg-[#F8F4EC]">
 
-    <!-- HEADER -->
+
     <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-black/5">
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
 
 
-        <!-- BRAND & SEARCH BAR -->
+
         <div class="flex items-center gap-6">
           <div
             class="font-serif text-2xl tracking-widest text-gray-900 cursor-pointer"
@@ -14,7 +14,7 @@
           >
             NOORÉ
           </div>
-          <!-- SEARCH BAR -->
+>
           <div class="relative" @keydown.esc="searchStore.suggestions = []">
             <input
               v-model="searchStore.query"
@@ -34,14 +34,14 @@
             >
               ✕
             </button>
-            <!-- Suggestion Dropdown -->
+ 
             <div v-if="searchStore.query.length > 1 && (searchStore.loadingSuggestions || searchStore.suggestions.length > 0)" class="absolute left-0 mt-2 w-full bg-white rounded-xl shadow-lg border border-gray-100 z-50 overflow-hidden">
               <div v-if="searchStore.loadingSuggestions" class="p-4 text-center text-gray-400 text-sm">Loading...</div>
               <template v-else>
                 <div v-if="searchStore.suggestions.length === 0" class="p-4 text-center text-gray-400 text-sm">No products found</div>
                 <ul v-else>
                   <li v-for="item in searchStore.suggestions" :key="item.id" @mousedown.prevent="goToProduct(item)" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer">
-                    <img :src="item.image || 'https://localhost/shopingcart/placeholder.png'" class="w-10 h-10 object-cover rounded-lg bg-gray-100" />
+                    <img :src="item.image || 'https://localhost/shopingcart/public/placeholder.png'" class="w-10 h-10 object-cover rounded-lg bg-gray-100" />
                     <div class="flex-1">
                       <div class="font-medium text-gray-900 text-sm line-clamp-1">{{ item.title }}</div>
                       <div class="text-xs text-[#C2A875] font-semibold">Rs. {{ Number(item.selling_price).toLocaleString() }}</div>
@@ -61,18 +61,18 @@
           >
             Home
           </router-link>
-
+<!-- 
           <router-link
             to="/shop"
             class="hover:text-black transition"
           >
             Shop
-          </router-link>
+          </router-link> -->
         </nav>
 
-        <!-- PROFILE & CART ICONS -->
+
         <div class="flex items-center gap-4">
-          <!-- Login/Register Icon -->
+
           <template v-if="!userStore.is_logged_in">
             <button @click="$router.push('/login')" class="p-2 rounded-full hover:bg-black/5 transition" title="Login">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
