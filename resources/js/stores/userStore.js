@@ -2,28 +2,12 @@ import { defineStore } from "pinia";
 import api from "../plugins/axios";
 import { errorHandler } from "@/services/responseHandleService";
 import { toRaw } from "vue";
+import { useCartStore } from "@/stores/cartStore";
 
 export const useUserStore = defineStore("user", {
     state: () => ({
         is_logged_in: false,        
         user: {},
-        notification: [
-            {
-                title: "New Message",
-                description: "You received a new message from Admin.",
-                time: "2 mins ago",
-            },
-            {
-                title: "Payment Successful",
-                description: "Your premium plan has been activated.",
-                time: "10 mins ago",
-            },
-            {
-                title: "System Update",
-                description: "A new system update is available.",
-                time: "1 hour ago",
-            },
-        ],
         loading: false,
         token: localStorage.getItem('auth_token'),
     }),
@@ -42,7 +26,7 @@ export const useUserStore = defineStore("user", {
                 form.append("email", data.email);
                 form.append("password", data.password);
                 const res = await api.post("/api/auth/login", form);
-                if (!res.data.data.token) {
+                if (!res.data?.data?.token) {
                     throw new Error("Token Not Found");
                 }
                 return res.data.data;
@@ -67,30 +51,7 @@ export const useUserStore = defineStore("user", {
                 throw await errorHandler(error);
             }
         },
-        // ==============================
-        // GET PROFILE
-        // ==============================
-        async getProfile(token = null)
-        {   
-            if (!token) {
-                token = localStorage.getItem('auth_token');
-            }
-
-            if (!token) {
-                throw new Error("Token Not Found");
-            }
-
-            try {
-                api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-                let res = await api.get('/api/auth/profile');
-              
-                
-                return res.data.data;
-            } catch (error) {
-                throw await errorHandler(error);
-            }
-        },
-         // ==============================
+          // ==============================
         // INITIALIZE SESSION
         // ==============================
        async initializeUserSession(token, data) {  
@@ -103,24 +64,56 @@ export const useUserStore = defineStore("user", {
                
                 api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
                 localStorage.setItem("auth_token", token);
+                this.token = token;
                 this.user = data;
                 this.is_logged_in = true;
-                
+
+                 const cartStore = useCartStore();
+                 cartStore.mergeGuestIntoUser(data.id);
             } catch (error) {
                 throw await errorHandler(error);
            } 
         },
         // ==============================
+        // GET PROFILE
+        // ==============================
+       async getProfile() {
+    const token = localStorage.getItem("auth_token");
+
+    if (!token) {
+        throw new Error("Token Not Found");
+    }
+
+    try {
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        const res = await api.get("/api/auth/profile");
+
+        this.user = res.data.data.user || res.data.data;
+        this.is_logged_in = true;
+        this.token = token;
+
+        return res.data.data;
+    } catch (error) {
+        throw await errorHandler(error);
+    }
+},
+
+        // ==============================
         // LOGOUT
         // ==============================
         async logOut(token){
-            try {
-                api.defaults.headers.common["Authorization"] = '';
-                localStorage.removeItem("auth_token", token);
-                return token;
-            } catch (error) {
-                throw await errorHandler(error);
-            }
+            
+            //clear API Auth
+            api.defaults.headers.common["Authorization"] = "";
+
+            //clear User Store
+            localStorage.removeItem("auth_token");
+
+
+            //reset user store
+            this.is_logged_in = false;
+            this.user = {};
+            this.token = null;
         },
        
 

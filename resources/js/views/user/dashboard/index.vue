@@ -1,24 +1,32 @@
 <template>
-  <v-container fluid>
-    <v-row>
-      <!-- Dashboard Cards -->
-      <v-col cols="12" sm="6" md="3" v-for="(value, key) in counter" :key="key">
-        <dashboard-card :title="value.title" :count="value.count" />
-      </v-col>
-    </v-row>
+  <div class="w-full p-4">
+    <!-- Dashboard Cards -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+      <div
+        v-for="(value, key) in counter"
+        :key="key"
+      >
+        <DashboardCard
+          :title="value.title"
+          :count="value.count"
+        />
+      </div>
+    </div>
 
     <!-- Graph Card -->
-    <v-row>
-      <v-col cols="12" md="12">
-        <v-card variant="elevated" elevation="5" color="background">
-          <v-container>
-            <h2>Sales Overview</h2>
-            <!-- <line-chart :chart-data="chartData" /> -->
-          </v-container>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+    <div class="mt-6">
+      <div
+        class="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900"
+      >
+        <h2 class="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-100">
+          Sales Overview
+        </h2>
+
+        <!-- Chart Placeholder -->
+        <!-- <LineChart :chart-data="chartData" /> -->
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>

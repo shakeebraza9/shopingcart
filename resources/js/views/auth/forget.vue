@@ -1,86 +1,87 @@
+
 <template>
-    <v-app class="bg-primary">
-        <div
-            class="position-absolute bottom-0 left-0 right-0 h-50 bg-primary"
-            style="z-index: 0; clip-path: polygon(0 29%, 100% 0, 100% 100%, 0% 100%);"
-        ></div>
+    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-100 relative">
+        <div class="absolute bottom-0 left-0 right-0 h-40 bg-blue-200" style="clip-path: polygon(0 29%, 100% 0, 100% 100%, 0% 100%);"></div>
+        <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8 z-10 relative">
+            <h2 class="text-2xl font-bold text-center mb-2 text-gray-800">Forgot Password</h2>
+            <p class="text-center text-gray-500 mb-6">Enter your email to receive a password reset link</p>
 
-        <v-main class="h-screen d-flex align-center justify-center" style="z-index: 10;">
-            <v-container fluid class="d-flex justify-center align-center">
-                <v-row justify="center">
-                    <v-col cols="12" sm="8" md="6" lg="4">
-                        <v-card elevation="10" rounded="lg" class="py-6 px-4">
-                            <v-card-title class="text-center text-h5 font-weight-medium">
-                                Forgot Password
-                            </v-card-title>
+            <form @submit.prevent="sendResetLink">
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2 text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12H8m8 0a4 4 0 11-8 0 4 4 0 018 0zm0 0v4m0-4V8" />
+                            </svg>
+                        </span>
+                        <input
+                            id="email"
+                            v-model="form.email"
+                            type="email"
+                            class="pl-10 pr-4 py-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            :class="{ 'border-red-500': errors.email }"
+                            placeholder="Email Address"
+                            autocomplete="email"
+                            required
+                        />
+                    </div>
+                    <p v-if="errors.email" class="text-xs text-red-500 mt-1">{{ errors.email }}</p>
+                </div>
 
-                            <v-card-subtitle class="text-center mb-4">
-                                Enter your email to receive a password reset link
-                            </v-card-subtitle>
+                <button
+                    type="submit"
+                    class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition disabled:opacity-50"
+                    :disabled="loading"
+                >
+                    <span v-if="loading">Sending...</span>
+                    <span v-else>Send Reset Link</span>
+                </button>
+            </form>
 
-                            <v-card-text>
-                                <v-text-field
-                                    v-model="form.email"
-                                    type="email"
-                                    label="Email Address"
-                                    prepend-inner-icon="mdi-email-outline"
-                                    variant="outlined"
-                                    density="comfortable"
-                                    color="primary"
-                                    :error="!!errors.email"
-                                    :error-messages="errors.email"
-                                />
-                            </v-card-text>
+            <hr class="my-6" />
 
-                            <v-card-actions>
-                                <v-btn
-                                    color="primary"
-                                    block
-                                    size="large"
-                                    :loading="loading"
-                                    @click="sendResetLink"
-                                >
-                                    Send Reset Link
-                                </v-btn>
-                            </v-card-actions>
-
-                            <v-divider class="my-4" />
-
-                            <div class="text-center">
-                                <v-btn
-                                    variant="text"
-                                    color="primary"
-                                    @click="$router.push('/login')"
-                                >
-                                    Back to Login
-                                </v-btn>
-                            </div>
-                        </v-card>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-main>
-    </v-app>
+            <div class="text-center">
+                <button
+                    type="button"
+                    class="text-blue-600 hover:underline text-sm font-medium"
+                    @click="$router.push('/login')"
+                >
+                    Back to Login
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
 
-<script>
-import { useAlertStore } from "@stores/alertStore";
-import axios from "axios";
+<script setup>
+import { ref } from 'vue';
+import { useAlertStore } from '@stores/alertStore';
+import axios from 'axios';
 
-export default {
-    name: "ForgotPassword",
-    data() {
-        return {
-            alertStore: useAlertStore(),
-            loading: false,
-            errors: {},
-            form: {
-                email: "",
-            },
-        };
-    },
+const alertStore = useAlertStore();
+const loading = ref(false);
+const errors = ref({});
+const form = ref({ email: '' });
 
-};
+async function sendResetLink() {
+    errors.value = {};
+    loading.value = true;
+    try {
+        // Replace with your actual API endpoint
+        const response = await axios.post('/api/auth/forgot-password', { email: form.value.email });
+        alertStore.add('Password reset link sent to your email.', 'success');
+        form.value.email = '';
+    } catch (error) {
+        if (error.response && error.response.data && error.response.data.errors) {
+            errors.value = error.response.data.errors;
+        } else {
+            alertStore.add('Failed to send reset link.', 'error');
+        }
+    } finally {
+        loading.value = false;
+    }
+}
 </script>
 
 <style scoped>

@@ -2,7 +2,8 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
-import vuetify from 'vite-plugin-vuetify'
+import tailwindcss from '@tailwindcss/vite';
+
 
 export default defineConfig({
     // base: "/build/",
@@ -27,6 +28,7 @@ export default defineConfig({
             refresh: true,
         }),
         vue(),
-        vuetify({ autoImport: true }),
+        // vuetify({ autoImport: true }),
+        tailwindcss(),
     ],
 });

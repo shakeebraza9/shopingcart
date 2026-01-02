@@ -1,93 +1,80 @@
 <template>
-    <v-app class="bg-primary">
-        <div class="position-absolute bottom-0 left-0 right-0 h-50 bg-primary"
-            style="z-index: 0; clip-path: polygon(0 29%, 100% 0, 100% 100%, 0% 100%);">
+  <div class="min-h-screen flex items-center justify-center bg-[#F8F4EC] px-6">
+    <!-- Card -->
+    <div
+      class="w-full max-w-md bg-white rounded-3xl shadow-xl px-8 py-10"
+    >
+      <!-- Brand -->
+      <div class="text-center mb-8">
+        <h1 class="font-serif text-3xl tracking-widest text-gray-900">
+          NOORÉ
+        </h1>
+        <p class="text-sm text-gray-500 mt-2">
+          Sign in to your account
+        </p>
+      </div>
+
+      <!-- FORM -->
+      <form @submit.prevent="login" class="space-y-6">
+        <!-- Email -->
+        <div>
+          <label class="block text-sm text-gray-700 mb-1">
+            Email address
+          </label>
+          <input
+            v-model="form.email"
+            type="email"
+            class="w-full rounded-full border border-gray-300 px-5 py-3
+                   focus:outline-none focus:ring-2 focus:ring-[#C2A875]"
+            placeholder="you@example.com"
+          />
+          <p v-if="errors.email" class="text-xs text-red-500 mt-1">
+            {{ errors.email }}
+          </p>
         </div>
-    
-        <v-main style="z-index: 10;" class="h-screen d-flex align-center justify-center">
-            <v-container fluid class="d-flex justify-center align-center">
-                <v-row justify="center">
-                    <v-col cols="12" sm="8" md="6" lg="4">
-                        <v-card color="background" class="py-6 px-4" elevation="10" rounded="lg">
-                            <v-card-title class="text-center text-h4 text-md-h4 font-weight-medium text-capitalize">
-                                    Sign In
-                            </v-card-title>
-                            <v-card-text>
-                                <v-container>
-                                        <v-row>
-                                            <v-col cols="12">
-                                                <v-text-field clearable v-model="form.email" type="email"
-                                                    prepend-inner-icon="mdi-email" variant="outlined" label="Work Email"
-                                                    :error="errors.email ? true : false" :error-messages="errors?.email"
-                                                    density="comfortable" color="primary" />
-                                            </v-col>
 
-                                            <v-col cols="12">
-                                                <v-text-field v-model="form.password"
-                                                    :error="errors.password ? true : false"
-                                                    :error-messages="errors?.password" type="password" clearable
-                                                    prepend-inner-icon="mdi-lock" variant="outlined" label="Password"
-                                                    density="comfortable" color="primary" />
-                                            </v-col>
+        <!-- Password -->
+        <div>
+          <label class="block text-sm text-gray-700 mb-1">
+            Password
+          </label>
+          <input
+            v-model="form.password"
+            type="password"
+            class="w-full rounded-full border border-gray-300 px-5 py-3
+                   focus:outline-none focus:ring-2 focus:ring-[#C2A875]"
+            placeholder="••••••••"
+          />
+          <p v-if="errors.password" class="text-xs text-red-500 mt-1">
+            {{ errors.password }}
+          </p>
+        </div>
 
-                                            <!-- <v-col cols="12" class="mt-n5">
-                                                <div
-                                                    class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center">
-                                                    <v-checkbox color="primary" label="Remember me" class="text-body-2"
-                                                        hide-details />
-                                                    <v-btn color="primary"
-                                                        to="http://localhost/autoboli/forgot-password" variant="text"
-                                                        class="text-body-2 pa-0 mt-n2 mt-sm-0" size="small">
-                                                        Forgot Password?
-                                                    </v-btn>
-                                                </div>
-                                            </v-col> -->
+        <!-- Button -->
+        <button
+          type="submit"
+          :disabled="themeStore.loading"
+          class="w-full py-3 rounded-full
+                 bg-[#C2A875] text-white font-medium tracking-wide
+                 hover:bg-[#B59A65] transition
+                 disabled:opacity-50"
+        >
+          {{ themeStore.loading ? "Signing in..." : "Sign In" }}
+        </button>
+      </form>
 
-                                            <v-col cols="12" class="pt-4">
-                                                <v-btn @click="login()" color="primary" variant="flat" block
-                                                    size="large" :loading="themeStore.loading">
-                                                    {{ themeStore.loading ? "Loading..." : "Log In" }}
-                                                </v-btn>
-                                            </v-col>
-                                            <!-- <v-col cols="12" class="mt-n4">
-                                                <div class="d-flex justify-end">
-                                                    <v-btn
-                                                        variant="text"
-                                                        color="primary"
-                                                        size="small"
-                                                        class="pa-0"
-                                                        @click="goToForgotPassword"
-                                                    >
-                                                        Forgot Password?
-                                                    </v-btn>
-                                                </div>
-                                            </v-col> -->
-
-                                            <v-col cols="12" class="text-center pt-2">
-                                                <span class="text-body-2">Securely sign in to your account using your email and password to continue. </span>
-                                                <!-- <v-btn to="/register" variant="plain" class="px-1 text-body-2"
-                                                    color="primary" size="small">
-                                                    Sign up
-                                                </v-btn> -->
-                                             
-
-                                            </v-col>
-                                        </v-row>
-                                </v-container>
-                            </v-card-text>
-                        </v-card>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-main>
-    </v-app>
+      <!-- Footer -->
+      <p class="text-center text-xs text-gray-500 mt-8 leading-relaxed">
+        Securely sign in to your account using your email and password.
+      </p>
+    </div>
+  </div>
 </template>
 
 <script>
 import { useThemeStore } from "@stores/themeStore";
 import { useUserStore } from "@stores/userStore";
 import { useAlertStore } from "@stores/alertStore";
-import { useTheme } from "vuetify";
 import Logo from "@assets/images/logo/logo.png";
 import AuthHeader from "./AuthHeader.vue";
 import { toRaw } from "vue";
@@ -103,7 +90,6 @@ export default {
             logo: Logo,
             themeStore: useThemeStore(),
             userStore: useUserStore(),
-            vuetify: useTheme(),
             alertStore: useAlertStore(),
             errors: {},
             loading: false,
@@ -116,37 +102,69 @@ export default {
     computed: {
 
     },
-    mounted() {
+    // mounted() {
 
-        // console.log(toRaw(this.userStore.$state));
-        this.$themeStore.startLoading()
-        this.userStore.getProfile().then(() => {
-            this.$themeStore.endLoading()
-            this.$router.replace("/admin/dashboard");
-        }).catch(() => this.$themeStore.endLoading())
+    //     // console.log(toRaw(this.userStore.$state));
+    //     this.$themeStore.startLoading()
+    //     this.userStore.getProfile().then(() => {
+    //         this.$themeStore.endLoading()
+    //         // this.$router.replace("/admin/dashboard");
+    //         this.$router.replace("/");
+
+    //     }).catch(() => this.$themeStore.endLoading())
             
        
-    },
+    // },
     methods: {
+        // async login() {
+        //     const themeStore = useThemeStore();
+
+        //     themeStore.startLoading();
+        //     this.errors = {};
+
+        //     try {
+
+        //         let response = await this.userStore.loginRequest(this.form);
+        //         this.userStore.initializeUserSession(response.token,response.user);
+        //         themeStore.endLoading();
+        //         this.alertStore.add('Logged In Success', 'success');
+        //         this.$router.replace("/admin/dashboard");
+
+        //     } catch (error) {
+        //         themeStore.endLoading();
+        //         this.errors = error.validation || {};
+        //         this.alertStore.add(error.message, 'error');
+        //     }
+        // },
         async login() {
-            const themeStore = useThemeStore();
+          this.themeStore.startLoading()
+          this.errors = {}
 
-            themeStore.startLoading();
-            this.errors = {};
+          try {
+            const response = await this.userStore.loginRequest(this.form)
 
-            try {
-
-                let response = await this.userStore.loginRequest(this.form);
-                this.userStore.initializeUserSession(response.token,response.user);
-                themeStore.endLoading();
-                this.alertStore.add('Logged In Success', 'success');
-                this.$router.replace("/admin");
-
-            } catch (error) {
-                themeStore.endLoading();
-                this.errors = error.validation || {};
-                this.alertStore.add(error.message, 'error');
+            // If user not found in DB, backend should return error, but double check:
+            if (!response.user || !response.token) {
+              this.alertStore.add('User not found in database.', 'error')
+              this.themeStore.endLoading()
+              return
             }
+
+            // save session
+            await this.userStore.initializeUserSession(
+              response.token,
+              response.user
+            )
+
+            this.alertStore.add("Logged in successfully", "success")
+            await this.$nextTick()
+            this.$router.replace("/")
+          } catch (error) {
+            this.errors = error.validation || {}
+            this.alertStore.add(error.message, "error")
+          } finally {
+            this.themeStore.endLoading()
+          }
         },
         goToForgotPassword() {
             console.log('Forgot clicked')

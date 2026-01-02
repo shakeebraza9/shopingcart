@@ -1,83 +1,68 @@
 <template>
-    <v-menu class="menuLabel" location="bottom" transition="fade-transition">
-        <template #activator="{ props }">
-            <v-btn icon v-bind="props" class="profileBtn">
-                <div class="d-flex align-center ga-2">
-                    <div class="profileImage d-flex justify-center align-center">
-                        <img :src="userStore.user.avatar" alt="" class="rounded"
-                            style="height: 80%; width: 80%;" />
-                    </div>
-                    <slot></slot>
-                </div>
-            </v-btn>
-        </template>
-        
-        <v-list elevation="0" class="border" style="min-width: 224px">
-            <v-list-item class="pa-3">
-                <v-list-item-title class="cursor-pointer">
-                    <div class="d-flex justify-start align-center ps-2 ga-2">
-                        <div class="profileImage d-flex justify-center align-center">
-                            <img :src="userStore.user.avatar" class="h-100 w-100 rounded position-static" />
-                        </div>
-                        <div>
-                            <p class="profile-name text-subtitle-1">
-                                {{ userStore.user.title }}
-                            </p>
-                            <p class="profile-type text-caption text-light_text_on mt-n2">
-                                {{ userStore.user.role }}
-                            </p>
-                        </div>
-                    </div>
-                </v-list-item-title>
-            </v-list-item>
-            <!-- <v-divider></v-divider> -->
-            <!-- <v-list-item link>
-                <v-list-item-title class="cursor-pointer">
-                    <router-link to="/user/settings/profile" class="text-decoration-none" >
-                        <div class="d-flex align-center ga-2 wrapper">
-                            <v-icon icon="mdi-account-outline text-light_text_on"></v-icon>
-                            <p class="text-light_text_on">My Profile</p>
-                        </div>
-                    </router-link>
-                </v-list-item-title>
-            </v-list-item> -->
-            <!-- <v-list-item link>
-                <v-list-item-title class="cursor-pointer">
-                    <router-link to="/user/settings/security" class="text-decoration-none" >
-                        <div class="d-flex align-center ga-2">
-                            <v-icon icon="mdi-cog-outline text-light_text_on"></v-icon>
-                            <p class="text-light_text_on">Settings</p>
-                        </div>
-                    </router-link>
-                </v-list-item-title>
-            </v-list-item> -->
-            <!-- <v-list-item link>
-                <v-list-item-title class="cursor-pointer">
-                    <router-link to="/user/settings/billing" class="text-decoration-none" >
-                        <div class="d-flex align-center ga-2 ">
-                            <v-icon icon="mdi-credit-card-outline text-light_text_on"></v-icon>
-                            <p class="text-light_text_on">Billings</p>
-                        </div>
-                    </router-link>
-                </v-list-item-title>
-            </v-list-item> -->
-            <v-divider></v-divider>
-            <v-list-item>
-                <v-list-item-title class="">
-                    <!-- <v-btn @click="logOut()" size="large" class="ml-n3" prepend-icon="mdi-logout"
-                        style="font-size: smaller;">
-                        <p class="">Logout</p>
-                    </v-btn> -->
-                    <div @click="logOut()" class="d-flex align-center ga-2 cursor-pointer">
-                        <v-icon icon="mdi-logout text-light_text_on"></v-icon>
-                        <p class="text-light_text_on">Logout</p>
-                    </div>
-                </v-list-item-title>
-            </v-list-item>
-        </v-list>
-    </v-menu>
+  <div class="relative">
+
+    <!-- Trigger Button -->
+    <button
+      @click="open = !open"
+      class="flex items-center gap-2 rounded-full p-1 hover:bg-gray-100 transition"
+    >
+      <div class="h-11 w-11 rounded-full overflow-hidden border">
+        <img
+          :src="userStore.user.avatar"
+          alt="avatar"
+          class="h-full w-full object-cover"
+        />
+      </div>
+      <slot />
+    </button>
+
+    <!-- Dropdown -->
+    <div
+      v-if="open"
+      @click.outside="open = false"
+      class="absolute right-0 mt-3 w-56 bg-white border rounded-xl shadow-lg z-50"
+    >
+      <!-- Profile Info -->
+      <div class="flex items-center gap-3 p-4 border-b">
+        <div class="h-10 w-10 rounded-full overflow-hidden border">
+          <img
+            :src="userStore.user.avatar"
+            class="h-full w-full object-cover"
+          />
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-900">
+            {{ userStore.user.title }}
+          </p>
+          <p class="text-xs text-gray-500">
+            {{ userStore.user.role }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="p-2">
+        <button
+          @click="logOut"
+          class="flex items-center gap-2 w-full px-3 py-2
+                 text-sm text-red-600 rounded-lg
+                 hover:bg-red-50 transition"
+        >
+          <!-- Logout Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7"/>
+          </svg>
+
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
-<script>
+
+<!-- <script>
 import { useUserStore } from '@stores/userStore'
 
 export default {
@@ -96,7 +81,30 @@ export default {
         }
     }
 };
+</script> -->
+
+<script>
+import { useUserStore } from '@stores/userStore'
+
+export default {
+  name: "ProfileDropdown",
+  data() {
+    return {
+      open: false,
+      userStore: useUserStore(),
+    }
+  },
+  methods: {
+    logOut() {
+      localStorage.removeItem("auth_token")
+      this.$alertStore.add("Logged Out Successfully", "success")
+      this.$router.push("/login")
+      this.open = false
+    }
+  }
+}
 </script>
+
 <style scoped >
 .profileImage {
     height: 45px;

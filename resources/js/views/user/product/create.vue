@@ -1,150 +1,153 @@
 <template>
-  <v-container fluid class="pa-4">
-
+  <div class="p-4">
     <!-- Top Bar -->
-    <v-row class="mb-4 align-center">
-      <v-col cols="12" class="d-flex justify-space-between">
-        <div>
-          <h3 class="text-h6 font-weight-medium mb-1">
-            Add Product
-          </h3>
-          <div class="text-caption text-grey">
-            Basic product information
-          </div>
-        </div>
+    <div class="mb-4 flex items-center justify-between">
+      <div>
+        <h3 class="mb-1 text-lg font-medium text-gray-800 dark:text-gray-100">
+          Add Product
+        </h3>
+        <p class="text-sm text-gray-500">
+          Basic product information
+        </p>
+      </div>
 
-        <v-btn
-          icon
-          variant="text"
-          color="primary"
-          to="/admin/product"
-        >
-          <v-icon>mdi-arrow-left</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+      <router-link
+        to="/admin/product"
+        class="rounded-md p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-800"
+      >
+        <i class="mdi mdi-arrow-left text-xl"></i>
+      </router-link>
+    </div>
 
     <!-- Card -->
-    <v-card elevation="2" rounded="lg">
-      <v-card-text class="pa-5">
-
-        <v-form ref="formRef" @submit.prevent="submitForm">
-
-          <v-row>
+    <div class="rounded-lg bg-white shadow-md dark:bg-gray-900">
+      <div class="p-5">
+        <form @submit.prevent="submitForm" ref="formRef" class="space-y-4">
+          <!-- Inputs -->
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <!-- Title -->
-            <v-col cols="12" md="6">
-              <v-text-field
+            <div>
+              <label class="form-label">Product Title</label>
+              <input
                 v-model="form.title"
-                label="Product Title"
+                type="text"
                 placeholder="Dior Sauvage"
-                variant="outlined"
-                density="compact"
-                hide-details="auto"
-                :rules="[rules.required]"
+                class="form-input"
               />
-            </v-col>
+              <p v-if="errors.title" class="form-error">
+                {{ errors.title }}
+              </p>
+            </div>
 
             <!-- Slug -->
-            <v-col cols="12" md="6">
-              <v-text-field
+            <div>
+              <label class="form-label">Slug</label>
+              <input
                 v-model="form.slug"
-                label="Slug"
+                type="text"
                 placeholder="dior-sauvage"
-                variant="outlined"
-                density="compact"
-                hide-details="auto"
-                :rules="[rules.required]"
+                class="form-input"
               />
-            </v-col>
-          </v-row>
+              <p v-if="errors.slug" class="form-error">
+                {{ errors.slug }}
+              </p>
+            </div>
+          </div>
 
           <!-- Actions -->
-          <v-row class="mt-4">
-            <v-col
-              cols="12"
-              class="d-flex justify-end ga-2"
+          <div class="flex justify-end gap-3 pt-4">
+            <button
+              type="button"
+              @click="resetForm"
+              class="rounded-md px-4 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-800"
             >
-              <v-btn
-                variant="text"
-                color="primary"
-                @click="resetForm"
-              >
-                Reset
-              </v-btn>
+              Reset
+            </button>
 
-              <v-btn
-                color="primary"
-                type="submit"
-                :loading="loading"
-              >
-                Save
-              </v-btn>
-            </v-col>
-          </v-row>
-
-        </v-form>
-
-      </v-card-text>
-    </v-card>
-
-  </v-container>
+            <button
+              type="submit"
+              :disabled="loading"
+              class="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+            >
+              <span v-if="!loading">Save</span>
+              <span v-else>Saving...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </template>
+
 
 
 <script>
 import generaApi from "@/models/general.model";
 
 export default {
-data() {
-  return {
-    loading: false,
-    form: {
-      title: "",
-      slug: "",
-    },
-    url: "/api/products",
-    rules: {
-      required: v => !!v || "This field is required",
-    },
-  };
-},
-methods: {
-  async submitForm() {
-    // validate form first
-    const valid = await this.$refs.formRef.validate();
-    if (!valid) return;
-
-    this.loading = true;
-    try {
-      const payload = {
-        title: this.form.title,
-        slug: this.form.slug,
-      };
-
-      const response = await generaApi.post(this.url, payload);
-
-      const successMessage = response.data?.message || "Product created successfully!";
-      if (this.$alertStore) this.$alertStore.add(successMessage, "success");
-
-      this.resetForm();
-
-    } catch (e) {
-      console.error(e);
-      const errorMessage = e.response?.data?.message || e.message || "Product creation failed";
-      if (this.$alertStore) this.$alertStore.add(errorMessage, "error");
-    } finally {
-      this.loading = false;
-    }
+  data() {
+    return {
+      loading: false,
+      form: {
+        title: "",
+        slug: "",
+      },
+      errors: {
+        title: "",
+        slug: "",
+      },
+      url: "/api/products",
+    };
   },
 
-  resetForm() {
-    this.form.title = "";
-    this.form.slug = "";
-    if (this.$refs.formRef) this.$refs.formRef.resetValidation();
-  },
-},
+  methods: {
+    validateForm() {
+      this.errors.title = this.form.title ? "" : "This field is required";
+      this.errors.slug = this.form.slug ? "" : "This field is required";
 
+      return !this.errors.title && !this.errors.slug;
+    },
+
+    async submitForm() {
+      if (!this.validateForm()) return;
+
+      this.loading = true;
+      try {
+        const payload = {
+          title: this.form.title,
+          slug: this.form.slug,
+        };
+
+        const response = await generaApi.post(this.url, payload);
+
+        const successMessage =
+          response.data?.message || "Product created successfully!";
+        if (this.$alertStore)
+          this.$alertStore.add(successMessage, "success");
+
+        this.resetForm();
+      } catch (e) {
+        console.error(e);
+        const errorMessage =
+          e.response?.data?.message ||
+          e.message ||
+          "Product creation failed";
+        if (this.$alertStore)
+          this.$alertStore.add(errorMessage, "error");
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    resetForm() {
+      this.form.title = "";
+      this.form.slug = "";
+      this.errors.title = "";
+      this.errors.slug = "";
+    },
+  },
 };
 </script>
+
 
 

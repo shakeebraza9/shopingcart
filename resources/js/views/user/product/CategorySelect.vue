@@ -1,21 +1,31 @@
 <template>
-  <v-select
-    v-model="selectedCategory"
-    :items="categories"
-    label="Category"
-    item-text="title"
-    item-value="id"
-    outlined
-    dense
-    required
-  >
-    <template #no-data>
-      <v-list-item>
-        <v-list-item-title>Loading categories...</v-list-item-title>
-      </v-list-item>
-    </template>
-  </v-select>
+  <div class="w-full">
+    <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+      Category
+    </label>
+
+    <select
+      v-model="selectedCategory"
+      required
+      class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm
+             focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500
+             dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+    >
+      <option disabled value="">
+        Loading categories...
+      </option>
+
+      <option
+        v-for="category in categories"
+        :key="category.id"
+        :value="category.id"
+      >
+        {{ category.title }}
+      </option>
+    </select>
+  </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'

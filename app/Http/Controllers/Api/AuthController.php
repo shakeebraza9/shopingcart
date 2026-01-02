@@ -108,6 +108,41 @@ class AuthController extends Controller
         ], 200);
     }
 
+      public function register(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'personalEmail' => 'required|email|unique:users,email',
+        'password'      => 'required|string|min:6',
+        'firstName'     => 'required|string|max:255',
+        
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'message' => 'Validation Failed',
+            'errors'  => $validator->errors(),
+        ], 422);
+    }
+
+     $user = User::create([
+        'name'     => $request->firstName . ' ' . ($request->surname ?? ''),
+        'email'    => $request->personalEmail,
+        'password' => Hash::make($request->password),
+        'status'   => 1,
+    ]);
+
+    // Create Sanctum token
+    $token = $user->createToken('autoboli_token')->plainTextToken;
+
+    return response()->json([
+        'message' => 'Account created successfully',
+        'data' => [
+            'user'  => $user,
+            'token' => $token,
+        ],
+    ], 201);
+}
+
 
 
 

@@ -12,6 +12,9 @@ import Layout from "@views/user/layout/index.vue";
 import Login from '@/views/auth/login.vue';
 import NotFound from "@views/user/404.vue"
 import Dashboard from '@views/user/dashboard/index.vue';
+import Register from '@/views/auth/register.vue';
+import Shop from "@/views/web/shop.vue"
+import ShopDetail from '@/views/web/shopdetail.vue';
 import Forget  from '@/views/auth/forget.vue';
 import ProductRoute from "@views/user/product/route"
 
@@ -20,7 +23,8 @@ const suburl = import.meta.env.VITE_SUB_URL;
 
 const routes = [
     ...Webroute,
-    { path: '/login', component: Login},
+    { path: '/login', component: Login, meta: { guestOnly: true }},
+    { path: '/register', component: Register, meta: { guestOnly: true }},
     { path: '/forgetpassowrd',name: 'forgot-password', component: Forget},
     {
         path: "/admin",
@@ -67,16 +71,17 @@ router.beforeEach(async (to, from, next) => {
         }
     
     
-    if (to.meta.requiresAuth){
-        if (auth.is_logged_in) {
-            next()
-        }else{
-            next('/login');
-        }
+            // 🔒 Auth-required routes
+            if (to.meta.requiresAuth && !auth.is_logged_in) {
+                return next('/login')
+            }
 
-    } else {
-        next()
-    }
+            // 🚫 Guest-only routes (LOGIN / REGISTER)
+            if (to.meta.guestOnly && auth.is_logged_in) {
+                return next('/')
+            }
+
+            next()
 
 
 

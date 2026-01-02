@@ -1,100 +1,153 @@
 <template>
-  <v-row>
-    <v-col cols="12">
+  <div class="p-6">
 
-      <v-card class="mt-3" elevation="1">
-        <!-- Card Header -->
-        <v-card-title class="d-flex justify-space-between align-center">
-          <div>
-            <h4 class="text-h6 mb-1">Products</h4>
-            <div class="text-caption text-grey">
-              View all products list
-            </div>
+    <!-- Card -->
+    <div class="bg-white rounded-xl shadow border">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b">
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900">Products</h2>
+          <p class="text-sm text-gray-500">View all products list</p>
+        </div>
+
+        <router-link
+          to="/admin/product/create"
+          class="inline-flex items-center gap-2
+                 px-4 py-2 rounded-lg
+                 bg-[#C2A875] text-white text-sm font-medium
+                 hover:bg-[#B59A65] transition"
+        >
+          + Add Product
+        </router-link>
+      </div>
+
+      <!-- Filters -->
+      <div class="px-6 py-4 border-b">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+
+          <!-- Length -->
+          <div class="md:col-span-2">
+            <label class="block text-sm text-gray-600 mb-1">Length</label>
+            <select
+              v-model="filter.length"
+              class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#C2A875]"
+            >
+              <option v-for="n in [10,50,100,500]" :key="n" :value="n">
+                {{ n }}
+              </option>
+            </select>
           </div>
 
-          <v-btn
-            color="primary"
-            prepend-icon="mdi-plus"
-            to="/admin/product/create"
-          >
-            Add Product
-          </v-btn>
-        </v-card-title>
+          <!-- Search -->
+          <div class="md:col-span-4">
+            <label class="block text-sm text-gray-600 mb-1">Search</label>
+            <input
+              v-model="filter.search"
+              type="text"
+              placeholder="Search products..."
+              class="w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#C2A875]"
+            />
+          </div>
 
-        <v-divider />
+          <!-- Actions -->
+          <div class="md:col-span-3 flex gap-3">
+            <button
+              @click="loadItems"
+              class="px-4 py-2 rounded-lg bg-[#C2A875] text-white text-sm hover:bg-[#B59A65]"
+            >
+              Apply
+            </button>
 
-        <v-card-text>
-          <v-row class="mb-3" align="center">
-            <v-col cols="12" md="2">
-              <v-select
-                label="Length"
-                v-model="filter.length"
-                :items="[10, 50, 100, 500]"
-                density="comfortable"
-                variant="outlined"
-              />
-            </v-col>
+            <button
+              @click="resetFilter"
+              class="px-4 py-2 rounded-lg border text-sm text-gray-700 hover:bg-gray-50"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
 
-            <v-col cols="12" md="4">
-              <v-text-field
-                label="Search"
-                v-model="filter.search"
-                clearable
-                density="comfortable"
-                variant="outlined"
-                prepend-inner-icon="mdi-magnify"
-              />
-            </v-col>
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full border-collapse">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600">ID</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600">Image</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600">Title</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600">Slug</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600">Created At</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600">Action</th>
+            </tr>
+          </thead>
 
-            <v-col cols="12" md="3" class="d-flex ga-2">
-              <v-btn color="primary" variant="flat" @click="loadItems">Apply</v-btn>
-              <v-btn color="primary" variant="outlined" @click="resetFilter">Reset</v-btn>
-            </v-col>
-          </v-row>
+          <tbody>
+            <tr v-if="loading">
+              <td colspan="6" class="text-center py-6 text-gray-500">
+                Loading...
+              </td>
+            </tr>
 
-          <v-data-table-server
-            class="border striped-table"
-            
-            :headers="headers"
-            :items="items"
-            :items-length="totalItems"
-            :loading="loading"
-            item-value="id"
-            @update:options="loadItems"
-          >
-            <template #item.img="{ item }">
-              <v-img :src="item.image_preview" width="60" height="50" cover class="rounded"/>
-            </template>
+            <tr
+              v-for="item in items"
+              :key="item.id"
+              class="border-t hover:bg-gray-50"
+            >
+              <td class="px-4 py-3 text-sm">{{ item.id }}</td>
 
-            <template #item.view="{ item }">
-              <v-btn color="primary" variant="tonal" size="small" :to="`/admin/product/edit/${item.id}`">
-                <v-icon size="18">mdi-pencil</v-icon>
-              </v-btn>
-
-              <v-btn color="red" variant="text" size="small" @click="deleteItem(item.id)">
-                <v-icon size="18">mdi-delete-outline</v-icon>
-              </v-btn>
-            </template>
-
-            <template #bottom>
-              <div class="py-3">
-                <custom-pagination
-                  :loading="loading"
-                  v-model:page="filter.page"
-                  :lastPage="last_page"
-                  @page-changed="loadItems"
+              <td class="px-4 py-3">
+                <img
+                  :src="item.image_preview"
+                  class="h-12 w-14 rounded object-cover border"
                 />
-              </div>
-            </template>
+              </td>
 
-          </v-data-table-server>
+              <td class="px-4 py-3 text-sm">{{ item.title }}</td>
+              <td class="px-4 py-3 text-sm text-gray-500">{{ item.slug }}</td>
+              <td class="px-4 py-3 text-sm text-gray-500">{{ item.created_at }}</td>
 
-        </v-card-text>
-      </v-card>
+              <td class="px-4 py-3 flex gap-2">
+                <router-link
+                  :to="`/admin/product/edit/${item.id}`"
+                  class="px-3 py-1 rounded bg-blue-50 text-blue-600 text-xs hover:bg-blue-100"
+                >
+                  Edit
+                </router-link>
 
-    </v-col>
-  </v-row>
+                <button
+                  @click="deleteItem(item.id)"
+                  class="px-3 py-1 rounded bg-red-50 text-red-600 text-xs hover:bg-red-100"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+
+            <tr v-if="!loading && !items.length">
+              <td colspan="6" class="text-center py-6 text-gray-500">
+                No products found
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t">
+        <custom-pagination
+          :loading="loading"
+          v-model:page="filter.page"
+          :lastPage="last_page"
+          @page-changed="loadItems"
+        />
+      </div>
+
+    </div>
+  </div>
 </template>
+
 
 <script>
 import generaApi from "@/models/general.model";

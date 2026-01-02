@@ -1,11 +1,21 @@
 <template>
-      <div>
-          <router-view></router-view>
-          <v-overlay :model-value="this.themeStore.loading" :persistent="true" class="align-center justify-center">
-            <v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
-          </v-overlay>
-          <Alert />
-      </div>
+  <div class="relative min-h-screen">
+    <!-- PAGE -->
+    <router-view />
+
+    <!-- GLOBAL LOADER -->
+    <div
+      v-if="themeStore.loading"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+    >
+      <div
+        class="w-14 h-14 border-4 border-[#C2A875] border-t-transparent rounded-full animate-spin"
+      ></div>
+    </div>
+
+    <!-- ALERTS -->
+    <Alert />
+  </div>
 </template>
 
 <script>
@@ -15,7 +25,7 @@ import { useUserStore } from './stores/userStore';
 import Alert from '@components/alert.vue'
 import Overlay from '@components/overlay.vue'
 import { toRaw } from 'vue'
-import { useTheme } from 'vuetify';
+
 
 
 
@@ -29,7 +39,7 @@ export default {
     return {
       themeStore: useThemeStore(),
       userStore: useUserStore(),
-      vuetify: useTheme(),
+      
   
     };
   },

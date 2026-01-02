@@ -1,35 +1,71 @@
 <template>
-  <v-select
-    :items="images"
-    :model-value="selected"
-    @update:model-value="onSelect"
-    item-title="text"
-    item-value="img"
-    :label="label"
-    placeholder="Select Image"
-    dense
-  >
-    <!-- Selected value -->
-    <template #selection="{ item }">
-      <div class="d-flex align-center">
-        <v-avatar size="36" class="mr-2" v-if="item">
-          <img :src="item.img" alt="selected"/>
-        </v-avatar>
-        <span>{{ item?.text || 'Select Image' }}</span>
-      </div>
-    </template>
+  <div class="relative w-full">
 
-    <!-- Dropdown items -->
-    <template #item="{ item, props }">
-      <v-list-item v-bind="props">
-        <v-list-item-avatar>
-          <img :src="item.img" alt="dropdown"/>
-        </v-list-item-avatar>
-        <v-list-item-title>{{ item.text }}</v-list-item-title>
-      </v-list-item>
-    </template>
-  </v-select>
+    <!-- Label -->
+    <label v-if="label" class="block text-sm font-medium text-gray-700 mb-1">
+      {{ label }}
+    </label>
+
+    <!-- Selected Box -->
+    <button
+      type="button"
+      @click="open = !open"
+      class="w-full flex items-center justify-between
+             rounded-lg border bg-white px-3 py-2
+             text-sm text-gray-700
+             hover:border-[#C2A875]
+             focus:outline-none focus:ring-2 focus:ring-[#C2A875]"
+    >
+      <div class="flex items-center gap-2">
+        <img
+          v-if="selected"
+          :src="selected.img"
+          class="h-9 w-9 rounded border object-cover"
+        />
+        <span class="text-gray-600">
+          {{ selected?.text || 'Select Image' }}
+        </span>
+      </div>
+
+      <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </button>
+
+    <!-- Dropdown -->
+    <div
+      v-if="open"
+      class="absolute z-50 mt-1 w-full rounded-lg border bg-white shadow-lg"
+    >
+      <ul class="max-h-60 overflow-auto py-1">
+        <li
+          v-for="item in images"
+          :key="item.img"
+          @click="onSelect(item)"
+          class="flex items-center gap-3 px-3 py-2
+                 cursor-pointer hover:bg-gray-50"
+        >
+          <img
+            :src="item.img"
+            class="h-9 w-9 rounded border object-cover"
+          />
+          <span class="text-sm text-gray-700">
+            {{ item.text }}
+          </span>
+        </li>
+
+        <li
+          v-if="!images.length"
+          class="px-4 py-3 text-sm text-gray-500 text-center"
+        >
+          No images available
+        </li>
+      </ul>
+    </div>
+
+  </div>
 </template>
+
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'

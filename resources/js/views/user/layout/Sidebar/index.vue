@@ -1,107 +1,113 @@
 <template>
-    <v-navigation-drawer  
-        @click="MenuClick"
-        class="pa-0" 
-        color="nav" 
-        :width="menuWidth" 
-        v-model="themeStore.menuOpen">
-        
-        <v-list density="compact" class="ps" nav>
-           
-   
-         
+  <!-- Mobile Overlay -->
+  <div
+    v-if="themeStore.menuOpen"
+    class="fixed inset-0 z-40 bg-black/40 lg:hidden"
+    @click="themeStore.menuOpen = false"
+  ></div>
 
-            <v-divider class="ps-0 pe-0"></v-divider>
-            <div class="mt-3" ></div>
+  <!-- Sidebar -->
+  <aside
+    class="fixed top-0 left-0 z-50 h-screen bg-[#0f172a] text-white
+           transition-all duration-300 ease-in-out flex flex-col"
+    :class="[
+      themeStore.menuOpen
+        ? 'translate-x-0'
+        : '-translate-x-full lg:translate-x-0',
+      isExpanded ? 'w-[258px]' : 'w-[68px]'
+    ]"
+    @mouseenter="expandMenu"
+    @mouseleave="collapseMenu"
+  >
+    <!-- Logo -->
+    <div class="flex h-[70px] items-center justify-center border-b border-white/10">
+      <span class="text-lg font-semibold">
+        {{ isExpanded ? 'Admin' : 'A' }}
+      </span>
+    </div>
 
-            <!-- Dynamic Menu Items -->
-            <template v-for="(item, index) in menus" :key="index">
+    <!-- Menu -->
+    <nav class="flex-1 overflow-y-auto py-3">
+      <template v-for="(item, index) in menus" :key="index">
+        <!-- Group -->
+        <div v-if="item.children" class="mb-1">
+          <button
+            @click="toggleGroup(item.label)"
+            class="flex w-full items-center gap-3 px-4 py-2 text-left
+                   transition hover:bg-white/10"
+          >
+            <span class="flex-1 truncate text-sm">
+              {{ item.label }}
+            </span>
+            <span class="text-xs">
+              {{ openGroup === item.label ? '−' : '+' }}
+            </span>
+          </button>
 
-                <v-list-group :value="item.label" v-if="item?.children">
-                    <template #activator="{ props }">
-                        <v-list-item 
-                          v-bind="props" 
-                          :title="item.label" 
-                          :prepend-icon="item.icon" />
-                    </template>
-                    <v-list-item v-for="child in item.children" :title="child.label" :to="child.path" />
-                </v-list-group>
+          <div
+            v-if="openGroup === item.label"
+            class="ml-4 mt-1 space-y-1"
+          >
+            <router-link
+              v-for="child in item.children"
+              :key="child.path"
+              :to="child.path"
+              class="block rounded px-3 py-2 text-sm transition
+                     hover:bg-white/10"
+              active-class="bg-[#C2A875] font-medium text-black"
+            >
+              {{ child.label }}
+            </router-link>
+          </div>
+        </div>
 
-                <v-list-item  v-else
-                    :to="item.path" 
-                    link 
-                    :prepend-icon="item.icon" 
-                    :ripple="false"
-                    :hide-overlay="false"
-                    class=""
-                    active-class="bg-primary on-primary  rounded my-active-menu hide-overlay">
-                    <template #title>
-                        <span :ripple="false" class="">{{ item.label }}</span>
-                    </template>
-                </v-list-item>
-
-            </template>
-
-              
-
-        </v-list>
-    </v-navigation-drawer>
+        <!-- Single -->
+        <router-link
+          v-else
+          :to="item.path"
+          class="flex items-center gap-3 rounded px-4 py-2
+                 transition hover:bg-white/10"
+          active-class="bg-[#C2A875] font-medium text-black"
+        >
+          <span class="truncate text-sm">
+            {{ item.label }}
+          </span>
+        </router-link>
+      </template>
+    </nav>
+  </aside>
 </template>
 
 <script>
-import { useDisplay } from "vuetify";
 import { useThemeStore } from "@stores/themeStore";
 import Menus from "./menu";
-import logo from "@assets/images/logo/logo.png"
-export default {
-    data() {
-        return {
-            menus: Menus,
-            themeStore: useThemeStore(),
-            display: useDisplay(),
-            logo: logo,
-        };
-    },
-    computed: {
-        menuWidth() {
-            
-            // md, sm, xs
-            if (this.display.mdAndDown) {
-                return  "258";
-            } else {
-                //for: lg, xl
-                return this.themeStore.menuType == "expanded" ? "258" : "68";
-            }
 
-        },
-        
+export default {
+  setup() {
+    const themeStore = useThemeStore();
+    return { themeStore };
+  },
+  data() {
+    return {
+      menus: Menus,
+      openGroup: null,
+    };
+  },
+  computed: {
+    isExpanded() {
+      return this.themeStore.menuType === "expanded";
     },
-    methods: {
-        MenuClick() {
-            console.log("Hovered IN");
-           // your code here
-           this.themeStore.menuType = "expanded";
-        },
-        onHoverOut() {
-            console.log("Hovered OUT");
-            // your code here
-            // this.themeStore.menuType = "collapsed";
-        }
+  },
+  methods: {
+    expandMenu() {
+      this.themeStore.menuType = "expanded";
     },
-    
+    collapseMenu() {
+      this.themeStore.menuType = "collapsed";
+    },
+    toggleGroup(label) {
+      this.openGroup = this.openGroup === label ? null : label;
+    },
+  },
 };
 </script>
-<style >
-
-
-
-
-
-
-/* Alternative (more future-proof) – target the actual overlay class */
-.my-active-menu  .v-list-item__overlay {
-  display: none !important;
-}
-
-
-</style>

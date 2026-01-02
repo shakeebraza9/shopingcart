@@ -1,40 +1,29 @@
 <template>
-  <v-overlay
-    :model-value="true"
-    class="global-loader d-flex align-center justify-center"
-    persistent
-    scrim="rgba(255, 255, 255, 0.5)"
+  <div
+    class="fixed inset-0 z-[9999] flex items-center justify-center
+           bg-white/60 backdrop-blur-md"
   >
-    <div class="loader-box">
-      <v-progress-circular
-        indeterminate
-        size="64"
-        width="5"
-        color="primary"
-      />
-      <p class="loader-text mt-4">Please wait...</p>
+    <div
+      class="bg-white/80 backdrop-blur-xl
+             rounded-2xl px-14 py-12
+             shadow-2xl flex flex-col items-center"
+    >
+      <!-- SPINNER -->
+      <div
+        class="w-14 h-14 border-4 border-[#C2A875]
+               border-t-transparent rounded-full animate-spin"
+      ></div>
+
+      <!-- TEXT -->
+      <p class="mt-6 text-sm font-medium text-gray-700 tracking-wide">
+        Please wait...
+      </p>
     </div>
-  </v-overlay>
+  </div>
 </template>
 
-<style scoped>
-.global-loader {
-  backdrop-filter: blur(8px);
-  z-index: 9999 !important;
+<script>
+export default {
+  name: "Overlay"
 }
-
-.loader-box {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 40px 60px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-  text-align: center;
-}
-
-.loader-text {
-  font-weight: 500;
-  font-size: 1rem;
-  color: #333;
-}
-</style>
+</script>

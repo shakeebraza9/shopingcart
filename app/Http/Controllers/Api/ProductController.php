@@ -132,6 +132,12 @@ class ProductController extends Controller
         $discountAmount = ($product->price * $discountPercent) / 100;
         $product->price = round($product->price - $discountAmount, 2);
 
+        // Calculate total stock quantity from variations
+        $stockQuantity = DB::table('variations')
+            ->where('product_id', $product->id)
+            ->sum('quantity');
+        $product->stock_quantity = (int) $stockQuantity;
+
         return response()->json([
             'status' => true,
             'data' => $product
@@ -169,7 +175,7 @@ public function checkStockInAva($productId, Request $request)
 
         $totalStock = $variation->quantity ?? 0;
 
-        // Step 2: kitna already sold hai (sirf completed orders count karo)
+       // step 2 already sold quantity(only from completed orders)
         $soldQty = DB::table('order_items')
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->where('order_items.variation_id', $variationId)
@@ -178,7 +184,7 @@ public function checkStockInAva($productId, Request $request)
 
         $availableStock = $totalStock - $soldQty;
 
-        // Step 3: check karo user ki quantity available hai ya nahi
+        //step 3 check if requested quantity is less than or equal to available stock
         if ($requestedQty <= $availableStock) {
             return response()->json([
                 'status' => true,

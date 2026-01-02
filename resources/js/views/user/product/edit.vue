@@ -1,89 +1,105 @@
 <template>
-  <v-container class="py-8">
-    <v-card class="mx-auto" elevation="5">
-      <v-card-title class="text-h5 font-weight-bold">
-        {{ isEdit ? 'Edit Product' : 'Create Product' }}
-      </v-card-title>
-      <v-card-text>
-        <v-form ref="productForm" class="pa-4">
+  <div class="py-8">
+    <div class="mx-auto max-w-5xl rounded-lg bg-white shadow-lg dark:bg-gray-900">
+      <!-- Card Title -->
+      <div class="border-b px-6 py-4">
+        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">
+          {{ isEdit ? 'Edit Product' : 'Create Product' }}
+        </h2>
+      </div>
 
-          <v-row dense>
-            <v-col cols="12" md="6">
-              <v-text-field v-model="product.title" label="Product Title" outlined dense required />
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field v-model="product.slug" label="Slug" outlined dense required />
-            </v-col>
-          </v-row>
+      <!-- Card Body -->
+      <div class="p-6">
+        <form class="space-y-6">
+          <!-- Title & Slug -->
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label class="form-label">Product Title</label>
+              <input
+                v-model="product.title"
+                type="text"
+                required
+                class="form-input"
+              />
+            </div>
 
+            <div>
+              <label class="form-label">Slug</label>
+              <input
+                v-model="product.slug"
+                type="text"
+                required
+                class="form-input"
+              />
+            </div>
+          </div>
 
-          <v-row>
-            <v-col cols="12" md="6">
-              <CategorySelect v-model="product.category" />
-            </v-col>
-          </v-row>
+          <!-- Category -->
+          <div class="grid grid-cols-1 md:grid-cols-2">
+            <CategorySelect v-model="product.category" />
+          </div>
 
-            <v-row>
-            <v-col cols="12" md="6">
-                <ImageSelect v-model="product.thumbnail" :images="images" label="Thumbnail" />
-            </v-col>
-            <v-col cols="12" md="6">
-                <ImageSelect v-model="product.hoverImage" :images="images" label="Hover Image" />
-            </v-col>
-            </v-row>
-
+          <!-- Images -->
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <ImageSelect
+              v-model="product.thumbnail"
+              :images="images"
+              label="Thumbnail"
+            />
+            <ImageSelect
+              v-model="product.hoverImage"
+              :images="images"
+              label="Hover Image"
+            />
+          </div>
 
           <!-- Prices -->
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-text-field
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label class="form-label">Price</label>
+              <input
                 v-model="product.price"
                 type="number"
-                label="Price"
-                outlined
-                dense
+                class="form-input"
               />
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
+            </div>
+
+            <div>
+              <label class="form-label">Selling Price</label>
+              <input
                 v-model="product.sellingPrice"
                 type="number"
-                label="Selling Price"
-                outlined
-                dense
+                class="form-input"
               />
-            </v-col>
-          </v-row>
+            </div>
+          </div>
 
           <!-- Description -->
-          <v-row>
-            <v-col cols="12">
-              <v-textarea
-                v-model="product.description"
-                label="Description"
-                rows="2"
-                outlined
-                dense
-              />
-            </v-col>
-          </v-row>
+          <div>
+            <label class="form-label">Description</label>
+            <textarea
+              v-model="product.description"
+              rows="2"
+              class="form-input"
+            ></textarea>
+          </div>
 
           <!-- Save Button -->
-           <div mt="3">
-
-               <v-row justify="center">
-                   <v-col cols="12" md="3">
-                       <v-btn color="primary" block @click="submitForm">
-                           {{ isEdit ? 'Update Product' : 'Save Product' }}
-                        </v-btn>
-                    </v-col>
-                </v-row>
-            </div>
-        </v-form>
-      </v-card-text>
-    </v-card>
-  </v-container>
+          <div class="flex justify-center pt-4">
+            <button
+              type="button"
+              @click="submitForm"
+              class="w-full max-w-xs rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+            >
+              {{ isEdit ? 'Update Product' : 'Save Product' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </template>
+
 
 <script setup>
 import { reactive, ref, onMounted } from 'vue'

@@ -1,6 +1,8 @@
 import { createPinia } from 'pinia'
 import { useAlertStore } from './alertStore';
 import { useThemeStore } from './themeStore';
+import { useCartStore } from './cartStore';
+
 import { toRaw } from 'vue';
 
 const pinia = createPinia()
@@ -19,6 +21,8 @@ pinia.use(({ store }) => {
 export function registerStores(app) {
   app.config.globalProperties.$alertStore = useAlertStore();
   app.config.globalProperties.$themeStore = useThemeStore();
+  app.config.globalProperties.$cartStore = useCartStore();
+
 }
 
 export default pinia
