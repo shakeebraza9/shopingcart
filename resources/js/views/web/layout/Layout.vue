@@ -86,7 +86,7 @@
               </svg>
             </button>
           </template>
-          <!-- Profile Icon with Name & Logout -->
+  
           <template v-else>
             <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 border border-gray-200">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -101,19 +101,19 @@
               </button>
             </div>
           </template>
-          <!-- Cart Icon -->
+
           <button
             @click="cartDrawer = true"
             class="relative p-2 rounded-full hover:bg-black/5 transition"
           >
-            <!-- Badge -->
+
             <span
               v-if="cart.count"
               class="absolute -top-1 -right-1 h-5 w-5 text-xs rounded-full bg-[#C2A875] text-white flex items-center justify-center"
             >
               {{ cart.count }}
             </span>
-            <!-- Icon -->
+
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-6 w-6 text-gray-800"
@@ -133,19 +133,19 @@
       </div>
     </header>
 
-    <!-- PAGE CONTENT -->
+
     <main class="flex-1">
       <router-view  />
     </main>
 
-    <!-- FOOTER -->
+
     <footer class="bg-white border-t border-black/5">
       <div class="max-w-7xl mx-auto px-6 py-8 text-center text-sm text-gray-500">
         © {{ new Date().getFullYear() }} NOORÉ — Crafted with elegance.
       </div>
     </footer>
 
-    <!-- CART DRAWER -->
+
     <CartDrawer
       :drawer="cartDrawer"
       

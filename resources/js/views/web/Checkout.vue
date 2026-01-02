@@ -1,15 +1,14 @@
 <template>
   <div class="bg-white min-h-screen">
-    <!-- Page Title -->
+
     <div class="text-center py-10">
       <h1 class="text-xl font-semibold tracking-wide">CHECKOUT PAGE</h1>
     </div>
 
-    <!-- Content -->
+
     <div class="max-w-6xl mx-auto px-4 pb-20">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
 
-        <!-- Billing Details -->
         <div class="border border-gray-200 p-6">
           <h2 class="font-semibold mb-6">Billing details</h2>
 
@@ -35,7 +34,7 @@
           </div>
         </div>
 
-        <!-- Order Summary -->
+       
         <div class="border border-gray-200 p-6">
           <h2 class="font-semibold mb-4">Your Order</h2>
 
