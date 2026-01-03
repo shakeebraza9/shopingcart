@@ -19,6 +19,7 @@ Route::get('/admin', function (Request $request) {
 Route::prefix('auth')->group(function () {
 
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/register',[AuthController::class,'register']);
     Route::get('/profile', [AuthController::class, 'profile'])->middleware(['auth:sanctum']);
 
@@ -36,5 +37,6 @@ Route::apiResource('/products', AdminProductController::class);
 Route::get('/categories', [AdminProductController::class, 'getCategories']); 
 Route::get('/getfiles', [AdminProductController::class, 'Getfiles']); 
 Route::apiResource('users', UserController::class);
+Route::get('/orders', [AdminProductController::class, 'getOrders']); 
 
 

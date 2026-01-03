@@ -1,6 +1,7 @@
 <template>
   <div class="min-h-screen bg-[#F8F4EC] py-16 px-6">
-    <!-- Back -->
+
+    <!-- BACK -->
     <button
       @click="$router.back()"
       class="mb-10 flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition"
@@ -8,11 +9,17 @@
       ← Back to Shop
     </button>
 
-    <!-- PRODUCT DETAIL -->
+    <!-- LOADER -->
+    <div v-if="loading" class="flex justify-center py-24">
+      <div class="w-12 h-12 border-4 border-[#C2A875] border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <!-- PRODUCT -->
     <div
-      v-if="product"
+      v-else-if="product"
       class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16"
     >
+
       <!-- IMAGE -->
       <div class="bg-white rounded-3xl p-10 shadow-sm">
         <img
@@ -39,22 +46,20 @@
         <!-- PRICE -->
         <div class="flex items-center gap-4 mb-6">
           <span class="text-2xl font-semibold text-[#C2A875]">
-            Rs. {{ Number(product.selling_price).toLocaleString() }}
+            Rs. {{ formatPrice(product.selling_price) }}
           </span>
 
           <span
             v-if="product.selling_price < product.price"
             class="text-sm text-gray-400 line-through"
           >
-            Rs. {{ Number(product.price).toLocaleString() }}
+            Rs. {{ formatPrice(product.price) }}
           </span>
         </div>
 
         <!-- STOCK -->
         <p class="text-sm mb-6">
-          <span
-            :class="product.stock_quantity > 0 ? 'text-green-600' : 'text-red-600'"
-          >
+          <span :class="product.stock_quantity > 0 ? 'text-green-600' : 'text-red-600'">
             {{ product.stock_quantity > 0 ? 'In Stock' : 'Out of Stock' }}
           </span>
           · {{ product.stock_quantity }} units available
@@ -64,37 +69,35 @@
         <div class="flex items-center gap-6 mb-8">
           <div class="flex items-center border rounded-full overflow-hidden">
             <button
-              class="px-4 py-2 text-lg"
+              class="px-4 py-2 text-lg disabled:opacity-30"
               @click="decreaseQty"
+              :disabled="quantity <= 1"
             >−</button>
+
             <span class="px-6">{{ quantity }}</span>
+
             <button
-              class="px-4 py-2 text-lg"
+              class="px-4 py-2 text-lg disabled:opacity-30"
               @click="increaseQty"
+              :disabled="quantity >= product.stock_quantity"
             >+</button>
           </div>
         </div>
 
-        <!-- ACTION -->
-          <button
-           
-           :disabled="product.stock_quantity === 0 || adding"
-           @click="addToCart"
-           class="w-full md:w-auto px-10 py-4 rounded-full
-                bg-[#C2A875] text-white font-medium
-                hover:bg-[#B59A65] transition disabled:opacity-40"
-          >
-            {{ cart.isInCart(product.id) ? "Added ✓" : "Add to Cart" }}
-          </button>
+        <!-- ADD TO CART -->
+        <button
+          :disabled="addDisabled"
+          @click="addToCart"
+          class="w-full md:w-auto px-10 py-4 rounded-full
+                 bg-[#C2A875] text-white font-medium
+                 hover:bg-[#B59A65] transition disabled:opacity-40"
+        >
+          {{ cart?.isInCart(product.id) ? 'Added ✓' : 'Add to Cart' }}
+        </button>
       </div>
     </div>
 
-    <!-- LOADER -->
-    <div v-if="loading" class="text-center py-20">
-      <div class="w-12 h-12 border-4 border-[#C2A875] border-t-transparent rounded-full animate-spin mx-auto"></div>
-    </div>
-
-    <!-- SUGGESTED PRODUCTS -->
+    <!-- SUGGESTED -->
     <div v-if="suggested.length" class="max-w-7xl mx-auto mt-24">
       <h2 class="text-2xl font-serif font-semibold mb-10">
         You may also like
@@ -116,7 +119,7 @@
           </h3>
 
           <p class="text-sm text-[#C2A875] font-medium mb-4">
-            Rs. {{ Number(item.selling_price).toLocaleString() }}
+            Rs. {{ formatPrice(item.selling_price) }}
           </p>
 
           <button
@@ -131,117 +134,101 @@
   </div>
 </template>
 
-
 <script>
-
 import generaApi from "@/models/general.model"
 import { useCartStore } from "@/stores/cartStore"
-import { useUserStore } from "@/stores/userStore"
-import axios from "axios"
-
-
 
 export default {
   data() {
     return {
       product: null,
       suggested: [],
-      quantity: 1, 
+      quantity: 1,
       loading: false,
-      slug: this.$route.params.slug || "",
       cart: null,
-      adding: false,
     }
   },
 
-  
+  computed: {
+    addDisabled() {
+      return (
+        !this.cart ||
+        this.product.stock_quantity === 0 ||
+        this.quantity > this.product.stock_quantity ||
+        this.cart.isInCart(this.product.id)
+      )
+    }
+  },
+
+  watch: {
+    "$route.params.slug": {
+      immediate: true,
+      handler(slug) {
+        if (slug) this.fetchProduct(slug)
+      }
+    }
+  },
+
   mounted() {
-    this.cart = useCartStore();
-    this.cart.load();
-    if (this.slug) this.fetchProduct();
+    this.cart = useCartStore()
+    this.cart.load()
   },
 
   methods: {
-    fetchProduct() {
+    fetchProduct(slug) {
       this.loading = true
-      generaApi
-        .getAndfind(`/api/shop/${this.slug}`)
+      this.quantity = 1
+
+      generaApi.getAndfind(`/api/shop/${slug}`)
         .then(res => {
-          if (res.data && res.status) {
-            this.product = res.data
-            this.fetchSuggestedProducts()
-          } else {
-            console.error("Product not found")
-            this.product = null
-          }
-        })
-        .catch(err => {
-          console.error("Product API error:", err)
+          this.product = res?.data || null
+          if (this.product) this.fetchSuggested()
         })
         .finally(() => {
           this.loading = false
         })
     },
-    fetchSuggestedProducts() {
-        generaApi
-          .getAndfind(`/api/shop?related_to=${this.product.id}`)
-          .then(res => {
-            this.suggested = res.data.data || []
-          })
-          .catch(() => {
-            this.suggested = []
-          })
-      },
 
+    fetchSuggested() {
+      generaApi
+        .getAndfind(`/api/shop?related_to=${this.product.id}`)
+        .then(res => {
+          this.suggested = res?.data?.data || []
+        })
+    },
 
     increaseQty() {
-        const stock = Number(this.product.stock_quantity || 0)
-
-        if (stock === 0) return
-
-        if (this.quantity < stock) {
-          this.quantity++
-        }
-      },
-      decreaseQty() {
-        if (this.quantity > 1) {
-          this.quantity--
-        }
-      },
-
-
-    async addToCart() {
-
-      const userStore = useUserStore();
-
-      //AUTH GUARD
-      if (!userStore.is_logged_in){
-        this.$router.push('/login');
-        return;
-      }
-
-      if (this.adding) return;
-      this.adding = true;
-      
-      try {
-        // Ensure CSRF cookie is set before making cart API call
-        await axios.get("/sanctum/csrf-cookie", { baseURL: "http://127.0.0.1:8000", withCredentials: true });
-        
-        await this.cart.add(this.product, this.quantity);
-      } catch (e) {
-        alert("Failed to add to cart");
-      } finally {
-        this.adding = false;
-      }
+      if (this.quantity < this.product.stock_quantity) this.quantity++
     },
+
+    decreaseQty() {
+      if (this.quantity > 1) this.quantity--
+    },
+  addToCart() {
+    if (!this.product || this.product.stock_quantity === 0) return
+
+    this.cart.addToCart({
+      id: this.product.id,
+      title: this.product.title,
+      price: this.product.selling_price,
+      quantity: this.quantity,
+      stock: this.product.stock_quantity,
+      image: this.product.image,
+      slug: this.product.slug
+    })
+
+    // OPEN sidebar immediately
+    this.$root.cartDrawer = true // if CartDrawer is a root-level ref
+  },
+
+    formatPrice(val) {
+      return Number(val || 0).toLocaleString()
+    },
+
     imageUrl(img) {
       if (!img) return 'https://localhost/shopingcart/placeholder.png'
       if (img.startsWith('http')) return img
-      // return `https://localhost/shopingcart/public/${img}`
-
-      return `http://127.0.0.1:8000/${img}`
-
-
+      return `https://localhost/shopingcart/public/${img}`
     }
   }
 }

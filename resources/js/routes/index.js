@@ -17,7 +17,7 @@ import Shop from "@/views/web/shop.vue"
 import ShopDetail from '@/views/web/shopdetail.vue';
 import Forget  from '@/views/auth/forget.vue';
 import ProductRoute from "@views/user/product/route"
-
+import OrderRoute from "@views/user/order/route"
 
 const suburl = import.meta.env.VITE_SUB_URL;
 
@@ -33,6 +33,7 @@ const routes = [
             { path: '', component: Dashboard, },
             { path: 'dashboard', component: Dashboard, },
             ...ProductRoute,
+            ...OrderRoute,
 
         ],
     },

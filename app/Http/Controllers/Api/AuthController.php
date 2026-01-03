@@ -10,7 +10,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-
 class AuthController extends Controller
 {
 
@@ -144,7 +143,23 @@ class AuthController extends Controller
 }
 
 
+public function logout(Request $request)
+{
 
+    if ($request->user()) {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Logged out successfully'
+        ], 200);
+    }
+
+    return response()->json([
+        'success' => false,
+        'message' => 'User not authenticated'
+    ], 401);
+}
 
 
 }

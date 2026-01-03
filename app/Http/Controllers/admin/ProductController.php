@@ -23,7 +23,9 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rule;;
 use App\Models\Filemanager;
-
+use App\Models\OrderStatus;
+use App\Models\Order;
+use App\Models\OrderItem;
 class ProductController extends Controller
 {
 
@@ -289,4 +291,68 @@ class ProductController extends Controller
             'message' => 'Product deleted successfully'
         ], 200);
     }
+
+
+    public function getOrders(Request $request)
+{
+    $query = Order::leftJoin('payment_methods','payment_methods.id','=','orders.payment_method')
+                  ->leftJoin('order_status', 'order_status.id', '=', 'orders.order_status')
+                  ->select('orders.*', 'payment_methods.title as payment_method_title');
+
+    if ($request->filled('id')) {
+        $query->where('orders.id', $request->id);
+    }
+    if ($request->filled('order_status')) {
+        $query->where('orders.order_status', $request->order_status);
+    }
+    if ($request->filled('payment_status')) {
+        $query->where('orders.payment_status', $request->payment_status);
+    }
+    if ($request->filled('tracking_id')) {
+        $query->where('orders.tracking_id', $request->tracking_id);
+    }
+    if ($request->filled('fullname')) {
+        $query->where('orders.customer_name', 'like', '%'.$request->fullname.'%');
+    }
+    if ($request->filled('phone')) {
+        $query->where('orders.customer_phone', 'like', '%'.$request->phone.'%');
+    }
+    if ($request->filled('grand_total')) {
+        $query->where('orders.grand_total', $request->grand_total);
+    }
+
+    $page   = $request->input('page', 1);
+    $length = $request->input('length', 10);
+    $total  = $query->count();
+
+    $orders = $query->skip(($page - 1) * $length)
+                    ->take($length)
+                    ->orderBy('orders.id','desc')
+                    ->get();
+
+
+    $data = $orders->map(function($order){
+        $status = OrderStatus::find($order->order_status);
+
+        return [
+            'id' => $order->id,
+            'tracking_id' => $order->tracking_id,
+            'customer_name' => $order->customer_name,
+            'customer_phone' => $order->customer_phone,
+            'order_status' => $status ? $status->title : null,
+            'payment_status' => $order->payment_status,
+            'payment_method' => $order->payment_method_title,
+            'grand_total' => $order->grand_total,
+        ];
+    });
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Orders fetched successfully',
+        'current_page' => $page,
+        'per_page' => $length,
+        'total' => $total,
+        'data' => $data
+    ]);
+}
 }

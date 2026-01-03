@@ -116,56 +116,56 @@ export default {
        
     // },
     methods: {
-        // async login() {
-        //     const themeStore = useThemeStore();
-
-        //     themeStore.startLoading();
-        //     this.errors = {};
-
-        //     try {
-
-        //         let response = await this.userStore.loginRequest(this.form);
-        //         this.userStore.initializeUserSession(response.token,response.user);
-        //         themeStore.endLoading();
-        //         this.alertStore.add('Logged In Success', 'success');
-        //         this.$router.replace("/admin/dashboard");
-
-        //     } catch (error) {
-        //         themeStore.endLoading();
-        //         this.errors = error.validation || {};
-        //         this.alertStore.add(error.message, 'error');
-        //     }
-        // },
         async login() {
-          this.themeStore.startLoading()
-          this.errors = {}
+            const themeStore = useThemeStore();
 
-          try {
-            const response = await this.userStore.loginRequest(this.form)
+            themeStore.startLoading();
+            this.errors = {};
 
-            // If user not found in DB, backend should return error, but double check:
-            if (!response.user || !response.token) {
-              this.alertStore.add('User not found in database.', 'error')
-              this.themeStore.endLoading()
-              return
+            try {
+
+                let response = await this.userStore.loginRequest(this.form);
+                this.userStore.initializeUserSession(response.token,response.user);
+                themeStore.endLoading();
+                this.alertStore.add('Logged In Success', 'success');
+                this.$router.replace("/");
+
+            } catch (error) {
+                themeStore.endLoading();
+                this.errors = error.validation || {};
+                this.alertStore.add(error.message, 'error');
             }
-
-            // save session
-            await this.userStore.initializeUserSession(
-              response.token,
-              response.user
-            )
-
-            this.alertStore.add("Logged in successfully", "success")
-            await this.$nextTick()
-            this.$router.replace("/")
-          } catch (error) {
-            this.errors = error.validation || {}
-            this.alertStore.add(error.message, "error")
-          } finally {
-            this.themeStore.endLoading()
-          }
         },
+        // async login() {
+        //   this.themeStore.startLoading()
+        //   this.errors = {}
+
+        //   try {
+        //     const response = await this.userStore.loginRequest(this.form)
+
+        //     // If user not found in DB, backend should return error, but double check:
+        //     if (!response.user || !response.token) {
+        //       this.alertStore.add('User not found in database.', 'error')
+        //       this.themeStore.endLoading()
+        //       return
+        //     }
+
+        //     // save session
+        //     await this.userStore.initializeUserSession(
+        //       response.token,
+        //       response.user
+        //     )
+
+        //     this.alertStore.add("Logged in successfully", "success")
+        //     await this.$nextTick()
+        //     this.$router.replace("/")
+        //   } catch (error) {
+        //     this.errors = error.validation || {}
+        //     this.alertStore.add(error.message, "error")
+        //   } finally {
+        //     this.themeStore.endLoading()
+        //   }
+        // },
         goToForgotPassword() {
             console.log('Forgot clicked')
             this.$router.push({ name: 'forgot-password' })
